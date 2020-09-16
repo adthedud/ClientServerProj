@@ -14,7 +14,6 @@ import org.apache.commons.lang3.*;
 
 public class ServerWorker extends Thread
 {
-
 	private Socket clientSocket;
 	private String login = null;
 	private Server server;
@@ -71,7 +70,7 @@ public class ServerWorker extends Thread
 			}			
 		}
 	}
-	private void handleLogout() throws IOException
+	private void handleLogout() throws IOException //TODO:need to handle error when quit is called before login
 	{				
 		List<ServerWorker> workerList = server.getWorkerList();
 		String offlineMsg = login + " is now offline!\n";
@@ -106,7 +105,8 @@ public class ServerWorker extends Thread
 				{
 					outputStream.write(msg.getBytes());
 					this.login = login;
-				} catch (IOException e) 
+				} 
+				catch (IOException e) 
 				{
 					e.printStackTrace();
 				}
@@ -136,9 +136,12 @@ public class ServerWorker extends Thread
 					}					
 				}
 				
-			}else {
+			}
+			else 
+			{
 				String msg = "Error logging in\n";
-				try {
+				try
+				{
 					outputStream.write(msg.getBytes());
 				} catch (IOException e) 
 				{
@@ -148,12 +151,16 @@ public class ServerWorker extends Thread
 		}
 		
 	}
-
+		//testing this out
 	private void send(String msg) throws IOException
 	{
 		if(login != null) 
 		{
 			outputStream.write(msg.getBytes());
-		}		
+		}
+		else
+		{
+			outputStream.write(("Please login first").getBytes());
+		}
 	}
 }
