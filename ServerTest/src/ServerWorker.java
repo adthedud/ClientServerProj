@@ -18,6 +18,7 @@ public class ServerWorker extends Thread
 	private String login = null;
 	private Server server;
 	private OutputStream outputStream;
+	private HashSet<String> topicSet = new HashSet<>();
 
 	public ServerWorker(Server server, Socket clientSocket) 
 	{
@@ -41,6 +42,8 @@ public class ServerWorker extends Thread
 		}
 	}
 	
+
+	
 	private void handleClientSocket() throws IOException, InterruptedException 
 	{
 		InputStream inputStream = clientSocket.getInputStream();
@@ -62,6 +65,19 @@ public class ServerWorker extends Thread
 				{
 					handleLogin(outputStream, tokens);
 				}
+				else if ("msg".equalsIgnoreCase(cmd))
+				{
+					String[] tokensMsg = StringUtils.split(line, null, 3);
+					handleMessage(tokensMsg);
+				}
+				else if ("join".equalsIgnoreCase(cmd))
+				{
+					handleJoin(tokens);
+				}
+				else if ("leave".equalsIgnoreCase(cmd))
+				{
+					handleLeave(tokens);
+				}
 				else 
 				{
 					String msg = "Unknown " + cmd + "\n";
@@ -70,8 +86,66 @@ public class ServerWorker extends Thread
 			}			
 		}
 	}
-	private void handleLogout() throws IOException //TODO:need to handle error when quit is called before login
-	{				
+	
+	private void handleLeave(String[] tokens) 
+	{
+		if(tokens.length > 1)
+		{
+			if(tokens[1].charAt(0) == '#')
+			{
+				topicSet.remove(tokens[1]);	
+			}
+		}
+			
+	}
+
+	public boolean isMemberOfTopic(String topic)
+	{
+		return topicSet.contains(topic);
+	}
+	
+	private void handleJoin(String[] tokens) 
+	{
+		if (tokens.length > 1)
+		{
+			
+			String topic = tokens[1];
+			topicSet.add(topic);
+		}
+			
+		
+	}
+
+	// msg #topic body
+	private void handleMessage(String[] tokens) throws IOException
+	{
+		String sendTo = tokens[1];
+		String body = tokens[2];
+		
+		boolean isTopic = sendTo.charAt(0) == '#';
+		
+		List<ServerWorker> workerList = server.getWorkerList();
+		for( ServerWorker worker : workerList)
+		{
+			if(isTopic)
+			{
+				if (worker.isMemberOfTopic(sendTo))
+				{
+					String outMsg = sendTo + " msg from "+  login + ": " + body + "\n";
+					worker.send(outMsg);
+				}
+			}
+			if (sendTo.equalsIgnoreCase(worker.getLogin()))
+			{
+				String outMsg = "msg from " + login + ": " + body + "\n";
+				worker.send(outMsg);
+			}
+		}
+	}
+	
+	private void handleLogout() throws IOException
+	{	
+		server.removeWorker(this);
 		List<ServerWorker> workerList = server.getWorkerList();
 		String offlineMsg = login + " is now offline!\n";
 		
@@ -98,7 +172,7 @@ public class ServerWorker extends Thread
 			String login = tokens[1];
 			String password = tokens[2];
 			
-			if ((login.equals("guest") && password.equals("guest"))|| (login.equals("Adam") && password.equals("test")) ) 
+			if ((login.equals("guest") && password.equals("guest"))|| (login.equalsIgnoreCase("Adam") && password.equals("test")) ) 
 			{
 				String msg = "Logged in as " + login + "\n";
 				try 
