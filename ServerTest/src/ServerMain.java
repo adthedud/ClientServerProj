@@ -1,5 +1,6 @@
 
-public class ServerMain extends Thread {
+public class ServerMain extends Thread 
+{
 	
 	public static void main(String[] args)
 	{

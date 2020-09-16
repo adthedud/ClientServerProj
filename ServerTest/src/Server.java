@@ -4,23 +4,27 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Server extends Thread{
+public class Server extends Thread
+{
 
 	private ArrayList<ServerWorker> workerList = new ArrayList<>();
-	
 	private final int serverPort;
-	public Server(int serverPort) {
+	
+	public Server(int serverPort) 
+	{
 		this.serverPort = serverPort;
-		
 	}
 	
-	public List<ServerWorker> getWorkerList(){
+	public List<ServerWorker> getWorkerList()
+	{
 		return workerList;
 	}
 
 	@Override
-	public void run(){
-		try {
+	public void run()
+	{
+		try 
+		{
 			ServerSocket serverSocket = new ServerSocket(serverPort);
 			
 			while(true)
@@ -33,7 +37,9 @@ public class Server extends Thread{
 				workerList.add(worker);
 				worker.start();
 			}
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}
