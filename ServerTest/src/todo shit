@@ -1,0 +1,3 @@
+1) Why doesn't ssh work and only telnet?
+2) Set up gui...duhhhh
+3) authentication --> text file on server, server will pull from this to check clients user:pass
