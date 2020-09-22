@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextPane;
 import javax.swing.JTextField;
 
-public class ClientGUI {
+public class ClientGUI{
 
 	
 	private JFrame frame;
@@ -80,18 +80,18 @@ public class ClientGUI {
 					HomeGUI homeGUI = new HomeGUI();
 					homeGUI.setVisible(true);
 					frame.setVisible(false);
+					homeGUI.setClientSocket(clientSocket);
 					
 					
 				} catch (UnknownHostException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
 		btnNewButton.setBounds(142, 180, 172, 34);
 		frame.getContentPane().add(btnNewButton);
+		
 	}
 }
