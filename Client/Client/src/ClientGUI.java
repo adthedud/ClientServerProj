@@ -11,7 +11,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextPane;
 import javax.swing.JTextField;
 
-public class ClientGUI{
+public class ClientGUI
+{
 
 	
 	private JFrame frame;
@@ -22,13 +23,18 @@ public class ClientGUI{
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
+	public static void main(String[] args) 
+	{
+		EventQueue.invokeLater(new Runnable() 
+		{
+			public void run() 
+			{
+				try 
+				{
 					ClientGUI window = new ClientGUI();
 					window.frame.setVisible(true);
-				} catch (Exception e) {
+				} 
+				catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -38,14 +44,16 @@ public class ClientGUI{
 	/**
 	 * Create the application.
 	 */
-	public ClientGUI() {
+	public ClientGUI() 
+	{
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize() 
+	{
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,9 +72,12 @@ public class ClientGUI{
 		frame.getContentPane().add(passwordTextField);
 		
 		JButton btnNewButton = new JButton("Login");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
+		btnNewButton.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
 					//Creates connection to server
 					Socket clientSocket = new Socket("127.0.0.1", 8818);
 					OutputStream outputStream = clientSocket.getOutputStream();
@@ -83,9 +94,13 @@ public class ClientGUI{
 					homeGUI.setClientSocket(clientSocket);
 					
 					
-				} catch (UnknownHostException e1) {
+				} 
+				catch (UnknownHostException e1) 
+				{
 					e1.printStackTrace();
-				} catch (IOException e1) {
+				} 
+				catch (IOException e1) 
+				{
 					e1.printStackTrace();
 				}
 			}
