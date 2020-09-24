@@ -18,7 +18,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.awt.event.ActionEvent;
 
-public class HomeGUI extends JFrame{
+public class HomeGUI extends JFrame
+{
 
 	private JPanel contentPane;
 	private JTextField textField;
@@ -29,27 +30,32 @@ public class HomeGUI extends JFrame{
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
+	public static void main(String[] args) 
+	{
+		EventQueue.invokeLater(new Runnable() 
+		{
+			public void run() 
+			{
+				try 
+				{
 					HomeGUI frame = new HomeGUI();
 					frame.setVisible(true);
 					
-				} catch (Exception e) {
+				} 
+				catch (Exception e) 
+				{
 					e.printStackTrace();
 				}
 			}
 		});
 	}
 	
-
-	
-
 	/**
 	 * Create the frame.
 	 */
-	public HomeGUI() {
+	@SuppressWarnings("unchecked")  //added to suppress warning at line 70 channellist.setModel(...)
+	public HomeGUI() 
+	{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 447);
 		contentPane = new JPanel();
@@ -59,12 +65,15 @@ public class HomeGUI extends JFrame{
 		
 		JList channelList = new JList();
 		channelList.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		channelList.setModel(new AbstractListModel() {
+		channelList.setModel(new AbstractListModel() 
+		{
 			String[] values = new String[] {"Sub1", "Sub2"};
-			public int getSize() {
+			public int getSize() 
+			{
 				return values.length;
 			}
-			public Object getElementAt(int index) {
+			public Object getElementAt(int index) 
+			{
 				return values[index];
 			}
 		});
@@ -92,7 +101,8 @@ public class HomeGUI extends JFrame{
 		//This Button Joins a selected channel when clicked
 		JButton joinChannelButton = new JButton("Join Channel");
 		joinChannelButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		joinChannelButton.addActionListener(new ActionListener() {
+		joinChannelButton.addActionListener(new ActionListener() 
+		{
 			public void actionPerformed(ActionEvent e) 
 			{
 				int channelIndex;
@@ -105,16 +115,20 @@ public class HomeGUI extends JFrame{
 		
 		//This Button is disconnects from the Server and closes application
 		JButton logoutButton = new JButton("Logout");
-		logoutButton.addActionListener(new ActionListener() {
+		logoutButton.addActionListener(new ActionListener() 
+		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				try {
+				try 
+				{
 					outputStream.write(("quit\n").getBytes());
 					clientSocket.close();
 					HomeGUI.this.setVisible(false);
 					
 					
-				} catch (IOException e1) {
+				} 
+				catch (IOException e1) 
+				{
 					e1.printStackTrace();
 				}
 			}
@@ -128,9 +142,12 @@ public class HomeGUI extends JFrame{
 	public void setClientSocket(Socket socket)
 	{
 		this.clientSocket = socket;
-		try {
+		try 
+		{
 			outputStream = clientSocket.getOutputStream();			
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}

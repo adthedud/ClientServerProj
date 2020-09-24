@@ -46,7 +46,7 @@ public class ServerWorker extends Thread
 		this.outputStream = clientSocket.getOutputStream();	
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line;
-		while((line = reader.readLine()) != null) 
+ 		while((line = reader.readLine()) != null) 
 		{
 			String[] tokens = StringUtils.split(line);
 			if(tokens != null && tokens.length > 0) 
@@ -169,10 +169,11 @@ public class ServerWorker extends Thread
 			String password = tokens[2];
 			
 			if ((login.equals("guest") && password.equals("guest"))|| (login.equalsIgnoreCase("Adam") && password.equals("test")) ) 
-			{
-				String msg = "Logged in as " + login + "\n";
+			 {
+				String msg = "yes\n";
 				try 
 				{
+					System.out.print(msg);
 					outputStream.write(msg.getBytes());
 					this.login = login;
 				} 
@@ -209,11 +210,12 @@ public class ServerWorker extends Thread
 			}
 			else 
 			{
-				String msg = "Error logging in\n";
+				String msg = "no\n";
 				try
 				{
 					outputStream.write(msg.getBytes());
-				} catch (IOException e) 
+				}
+				catch (IOException e) 
 				{
 					e.printStackTrace();
 				}

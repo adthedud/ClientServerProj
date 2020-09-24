@@ -28,13 +28,13 @@ public class Server extends Thread
 			ServerSocket serverSocket = new ServerSocket(serverPort);
 			
 			while(true)
-			{				
+			{								
 				Socket clientSocket = serverSocket.accept();	//Accepts clients connection here
-				System.out.println("Client Connected from " + clientSocket);
-				
+				//System.out.println("Client Connected from " + clientSocket);
 				//Starts a new Thread
 				ServerWorker worker = new ServerWorker(this, clientSocket);
 				workerList.add(worker);
+				
 				worker.start();
 			}
 		} 
