@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.List;
 import org.apache.commons.lang3.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class ServerWorker extends Thread
 {
@@ -168,7 +169,7 @@ public class ServerWorker extends Thread
 			String login = tokens[1];
 			String password = tokens[2];
 			
-			if ((login.equals("guest") && password.equals("guest"))|| (login.equalsIgnoreCase("Adam") && password.equals("test")) ) 
+			if ((login.equals("guest") && checkPass(password,"$2a$10$lc0LIx7IzY7G77Hhe.yWBe9p6OQoBXoCLtDixELJdX8yx8gXzB4JG"))|| (login.equalsIgnoreCase("Adam") && password.equals("test")) ) 
 			 {
 				String msg = "yes\n";
 				try 
@@ -233,6 +234,20 @@ public class ServerWorker extends Thread
 		else
 		{
 			outputStream.write(("Please login first").getBytes());
+		}
+	}
+	//checks to see if the password entered is correct by comparing to the encrypted password
+	private boolean checkPass(String plainPassword, String hashedPassword) 
+	{
+		if (BCrypt.checkpw(plainPassword, hashedPassword))
+		{
+			System.out.println("The password matches.");
+			return true;
+		}
+		else
+		{
+			System.out.println("The password does not match.");	
+			return false;
 		}
 	}
 }
