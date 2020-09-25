@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,6 +8,11 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.List;
 import org.apache.commons.lang3.*;
+import org.json.JSONObject;
+import org.json.JSONPointer;
+import org.json.JSONArray;
+import org.json.JSONPointerException;
+import org.apache.commons.io.FileUtils;
 
 public class ServerWorker extends Thread
 {
@@ -168,12 +174,30 @@ public class ServerWorker extends Thread
 			String login = tokens[1];
 			String password = tokens[2];
 			
-			if ((login.equals("guest") && password.equals("guest"))|| (login.equalsIgnoreCase("Adam") && password.equals("test")) ) 
+			File file = new File("src\\authenticate.json");
+			String content = FileUtils.readFileToString(file, "utf-8");
+			JSONObject pointer  = new JSONObject(content);
+			//JSONObject creds = pointer.getJSONObject("credentials");
+			JSONArray creds = pointer.getJSONArray("credentials");
+			String authUser;
+			String authPass = null;
+			for(int i = 0; i < creds.length(); i++)
+			{
+				authUser = creds.getJSONObject(i).getString("username");
+				//System.out.println(authUser);
+				if (authUser.equals(login))
+				{
+					authPass = creds.getJSONObject(i).getString("password");
+					//System.out.println(authPass);
+					break;
+				}
+			}
+			if (authPass != null  && authPass.equals(password))
 			 {
 				String msg = "yes\n";
 				try 
 				{
-					System.out.print(msg);
+					//System.out.print(msg);
 					outputStream.write(msg.getBytes());
 					this.login = login;
 				} 

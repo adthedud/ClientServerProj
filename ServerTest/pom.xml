@@ -10,6 +10,17 @@
 	    <artifactId>cxf-codegen-plugin</artifactId>
 	    <version>3.4.0</version>
 	</dependency>
+	<dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20160810</version>
+    </dependency>
+    <dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.8.0</version>
+</dependency>
+    
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>

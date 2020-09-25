@@ -1,0 +1,15 @@
+{
+	"credentials":
+	[{
+		"username": "guest",
+		"password": "guest"
+	},
+	{
+		"username": "adam",
+		"password": "pass"
+	},
+	{
+		"username": "jake",
+		"password": "word"
+	}]
+}

@@ -50,11 +50,11 @@ public class ClientGUI
 		InputStream inputStream = clientSocket.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line = reader.readLine();
-		System.out.println("ClientGUI: msg from server: " + line);
+		System.out.print(line);
 		if (line != null)
 		{
 			//System.out.println("ClientGUI, msg received: " + line);
-			if (line == "yes")
+			if (line.equals("yes"))
 			{
 				return true;
 			}
@@ -92,7 +92,7 @@ public class ClientGUI
 		usernameTextField = new JTextField();
 		usernameTextField.setBounds(67, 132, 115, 37);
 		frame.getContentPane().add(usernameTextField);
-		usernameTextField.setColumns(10);  //why is this 10?
+		usernameTextField.setColumns(10);
 		
 		passwordTextField = new JTextField();
 		passwordTextField.setColumns(10);
