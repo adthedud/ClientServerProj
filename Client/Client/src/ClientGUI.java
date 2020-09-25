@@ -15,6 +15,8 @@ import javax.swing.JTextPane;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class ClientGUI
 {
 	private JFrame frame, loginFailFrame;
@@ -69,6 +71,11 @@ public class ClientGUI
 			return false;
 		}
 	}
+	
+	private String hashPassword(String plainTextPassword)
+	{
+	    return BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+	}	
 
 	/**
 	 * Create the application.
@@ -113,6 +120,7 @@ public class ClientGUI
 					//retrieves username and password from text fields
 					String username = usernameTextField.getText();
 					String password = passwordTextField.getText();
+					String encryptedPassword = hashPassword(password);
 					
 					boolean access = Authenticate(username, password, clientSocket);
 					if (access == true)
@@ -164,4 +172,7 @@ public class ClientGUI
 		frame.getContentPane().add(btnNewButton);
 		
 	}
+	
+
+
 }

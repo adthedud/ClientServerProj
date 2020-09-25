@@ -13,6 +13,7 @@ import org.json.JSONPointer;
 import org.json.JSONArray;
 import org.json.JSONPointerException;
 import org.apache.commons.io.FileUtils;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class ServerWorker extends Thread
 {
