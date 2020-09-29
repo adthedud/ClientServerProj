@@ -182,18 +182,21 @@ public class ServerWorker extends Thread
 			JSONArray creds = pointer.getJSONArray("credentials");
 			String authUser;
 			String authPass = null;
+			
+			//looks through the users in JSON to see which one is the desired account to compare
 			for(int i = 0; i < creds.length(); i++)
 			{
 				authUser = creds.getJSONObject(i).getString("username");
-				//System.out.println(authUser);
 				if (authUser.equals(login))
 				{
 					authPass = creds.getJSONObject(i).getString("password");
-					//System.out.println(authPass);
 					break;
 				}
 			}
-			if (authPass != null  && authPass.equals(password))
+			
+			//if a user is found and the user has the correct password he is then logged in
+			//TODO: Eventually get rid of "authPass.equals(password)" and only use the password checking with checkPass
+			if (authPass != null  && (authPass.equals(password) || checkPass(password, authPass)))
 			 {
 				String msg = "yes\n";
 				try 
@@ -258,6 +261,21 @@ public class ServerWorker extends Thread
 		else
 		{
 			outputStream.write(("Please login first").getBytes());
+		}
+	}
+	
+	private boolean checkPass(String plainPassword, String hashedPassword) 
+	{
+		if (BCrypt.checkpw(plainPassword, hashedPassword))
+		{
+			System.out.println("The password matches.");
+			return true;
+		}
+		
+		else
+		{
+			System.out.println("The password does not match.");
+			return false;
 		}
 	}
 }

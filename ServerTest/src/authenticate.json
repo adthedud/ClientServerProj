@@ -2,11 +2,11 @@
 	"credentials":
 	[{
 		"username": "guest",
-		"password": "guest"
+		"password": "$2a$10$OVGBykWZeHs0XZtOdP2uI.jxHf7u7gRhncxX.CYJwwf8fecgx7Uw2" 
 	},
 	{
 		"username": "adam",
-		"password": "pass"
+		"password": "$2a$10$ybkG8W0l9R9Zo9n4aXv.e.kKw/VleAsp.XLWdRoXClezYe9I18gG6"
 	},
 	{
 		"username": "jake",

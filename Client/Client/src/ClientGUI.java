@@ -72,9 +72,12 @@ public class ClientGUI
 		}
 	}
 	
+	//This is not needed here. Just was used for hardcoding a couple of passwords
 	private String hashPassword(String plainTextPassword)
 	{
-	    return BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+		String hPass = BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+		System.out.println(hPass);
+	    return hPass;
 	}	
 
 	/**
@@ -120,7 +123,6 @@ public class ClientGUI
 					//retrieves username and password from text fields
 					String username = usernameTextField.getText();
 					String password = passwordTextField.getText();
-					String encryptedPassword = hashPassword(password);
 					
 					boolean access = Authenticate(username, password, clientSocket);
 					if (access == true)
@@ -171,7 +173,9 @@ public class ClientGUI
 		btnNewButton.setBounds(142, 180, 172, 34);
 		frame.getContentPane().add(btnNewButton);
 		
+		
 	}
+	
 	
 
 
