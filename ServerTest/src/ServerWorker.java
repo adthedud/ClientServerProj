@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,6 +8,11 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.List;
 import org.apache.commons.lang3.*;
+import org.json.JSONObject;
+import org.json.JSONPointer;
+import org.json.JSONArray;
+import org.json.JSONPointerException;
+import org.apache.commons.io.FileUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class ServerWorker extends Thread
@@ -169,12 +175,33 @@ public class ServerWorker extends Thread
 			String login = tokens[1];
 			String password = tokens[2];
 			
-			if ((login.equals("guest") && checkPass(password,"$2a$10$lc0LIx7IzY7G77Hhe.yWBe9p6OQoBXoCLtDixELJdX8yx8gXzB4JG"))|| (login.equalsIgnoreCase("Adam") && password.equals("test")) ) 
+			File file = new File("src\\authenticate.json");
+			String content = FileUtils.readFileToString(file, "utf-8");
+			JSONObject pointer  = new JSONObject(content);
+			//JSONObject creds = pointer.getJSONObject("credentials");
+			JSONArray creds = pointer.getJSONArray("credentials");
+			String authUser;
+			String authPass = null;
+			
+			//looks through the users in JSON to see which one is the desired account to compare
+			for(int i = 0; i < creds.length(); i++)
+			{
+				authUser = creds.getJSONObject(i).getString("username");
+				if (authUser.equals(login))
+				{
+					authPass = creds.getJSONObject(i).getString("password");
+					break;
+				}
+			}
+			
+			//if a user is found and the user has the correct password he is then logged in
+			//TODO: Eventually get rid of "authPass.equals(password)" and only use the password checking with checkPass
+			if (authPass != null  && (authPass.equals(password) || checkPass(password, authPass)))
 			 {
 				String msg = "yes\n";
 				try 
 				{
-					System.out.print(msg);
+					//System.out.print(msg);
 					outputStream.write(msg.getBytes());
 					this.login = login;
 				} 
@@ -236,7 +263,7 @@ public class ServerWorker extends Thread
 			outputStream.write(("Please login first").getBytes());
 		}
 	}
-	//checks to see if the password entered is correct by comparing to the encrypted password
+	
 	private boolean checkPass(String plainPassword, String hashedPassword) 
 	{
 		if (BCrypt.checkpw(plainPassword, hashedPassword))
@@ -244,9 +271,10 @@ public class ServerWorker extends Thread
 			System.out.println("The password matches.");
 			return true;
 		}
+		
 		else
 		{
-			System.out.println("The password does not match.");	
+			System.out.println("The password does not match.");
 			return false;
 		}
 	}

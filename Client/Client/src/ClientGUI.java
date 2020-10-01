@@ -52,7 +52,7 @@ public class ClientGUI
 		InputStream inputStream = clientSocket.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line = reader.readLine();
-		System.out.println("ClientGUI: msg from server: " + line);
+		System.out.print(line);
 		if (line != null)
 		{
 			//System.out.println("ClientGUI, msg received: " + line);
@@ -72,9 +72,12 @@ public class ClientGUI
 		}
 	}
 	
+	//This is not needed here. Just was used for hardcoding a couple of passwords
 	private String hashPassword(String plainTextPassword)
 	{
-	    return BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+		String hPass = BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+		System.out.println(hPass);
+	    return hPass;
 	}	
 
 	/**
@@ -99,7 +102,7 @@ public class ClientGUI
 		usernameTextField = new JTextField();
 		usernameTextField.setBounds(67, 132, 115, 37);
 		frame.getContentPane().add(usernameTextField);
-		usernameTextField.setColumns(10);  //why is this 10?
+		usernameTextField.setColumns(10);
 		
 		passwordTextField = new JTextField();
 		passwordTextField.setColumns(10);
@@ -120,7 +123,6 @@ public class ClientGUI
 					//retrieves username and password from text fields
 					String username = usernameTextField.getText();
 					String password = passwordTextField.getText();
-					String encryptedPassword = hashPassword(password);
 					
 					boolean access = Authenticate(username, password, clientSocket);
 					if (access == true)
@@ -171,7 +173,9 @@ public class ClientGUI
 		btnNewButton.setBounds(142, 180, 172, 34);
 		frame.getContentPane().add(btnNewButton);
 		
+		
 	}
+	
 	
 
 

@@ -1,3 +1,6 @@
-1) Why doesn't ssh work and only telnet?
-2) Set up gui...duhhhh
-3) authentication --> text file on server, server will pull from this to check clients user:pass
+1) Authentication: json file on server, server will pull from this to check clients user:pass  (ServerWorker)
+		-->	json needs to include: user, pass, friends list, subscribed channels
+2) Create button to create account (ClientGUI)
+3) Add button to create / join a channel (HomeGUI)
+4) Add friends list shit (Server worker and HomeGUI)
+5) Make database for text channels (Server worker, HomeGUI)
