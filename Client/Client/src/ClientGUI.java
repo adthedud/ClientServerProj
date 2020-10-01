@@ -19,7 +19,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class ClientGUI
 {
-	private JFrame frame, loginFailFrame;
+	private JFrame frame, loginFailFrame, userCreatedFrame, newUserFailFrame;
 	private JTextField usernameTextField;
 	private JTextField passwordTextField;
 	
@@ -44,34 +44,7 @@ public class ClientGUI
 			}
 		});
 	}
-	private boolean Authenticate(String user, String pass, Socket clientSocket) throws IOException//authenticates with server and grants/denies access to HomeGUI
-	{
-		System.out.println("User is: " + user + " " + "Pass is: " +pass);
-		OutputStream outputStream = clientSocket.getOutputStream();
-		outputStream.write(("login " + user + " " + pass + "\n").getBytes()); //TODO: get response from server and return true or false based on msg.
-		InputStream inputStream = clientSocket.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-		String line = reader.readLine();
-		System.out.print(line);
-		if (line != null)
-		{
-			//System.out.println("ClientGUI, msg received: " + line);
-			if (line.equals("yes"))
-			{
-				return true;
-			}
-			else 
-			{
-				return false;
-			}
-		}
-		else
-		{
-			System.out.println("no msg from server recieved :(");
-			return false;
-		}
-	}
-	
+		
 	//This is not needed here. Just was used for hardcoding a couple of passwords
 	private String hashPassword(String plainTextPassword)
 	{
@@ -170,13 +143,123 @@ public class ClientGUI
 				}
 			}
 		});
-		btnNewButton.setBounds(142, 180, 172, 34);
+		btnNewButton.setBounds(67, 190, 115, 34);
 		frame.getContentPane().add(btnNewButton);
 		
+		JButton btnCreate = new JButton("Create");
+		btnCreate.addActionListener(new ActionListener() 
+		{
 		
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					String user = usernameTextField.getText();
+					String pass = passwordTextField.getText();
+					
+
+					Socket clientSocket = new Socket("127.0.0.1", 8817);
+					OutputStream outputStream = clientSocket.getOutputStream();
+					String msg = "create " + user +" " + pass + "\n";
+					System.out.println(msg);
+					outputStream.write(msg.getBytes());
+					InputStream inputStream = clientSocket.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+					String line = reader.readLine();
+					System.out.println("clientGUI: line=" + line);
+					if (line != null)
+					{
+						if (line.equals("User Created"))
+						{
+							userCreatedFrame = new JFrame("User created successfully");
+							userCreatedFrame.setBounds(175, 175, 600, 200);
+							userCreatedFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+							userCreatedFrame.getContentPane().setLayout(null);
+							userCreatedFrame.setVisible(true);
+							
+							JLabel userCreatedLabel = new JLabel();
+							userCreatedLabel.setText("New User Created Successfully");
+							userCreatedLabel.setBounds(50, 25, 800, 50);
+							userCreatedFrame.getContentPane().add(userCreatedLabel);
+							
+							JButton okButton2 = new JButton("Ok");
+							okButton2.setBounds(250, 75, 50, 25);
+							userCreatedFrame.getContentPane().add(okButton2); //difference between .getContentPane().add and .add.... both work the same?
+							
+							okButton2.addActionListener(new ActionListener()
+							{
+								public void actionPerformed(ActionEvent e)
+								{
+									userCreatedFrame.setVisible(false);
+								}
+							});
+						}
+						else
+						{
+							newUserFailFrame = new JFrame("New Account failed");
+							newUserFailFrame.setBounds(175, 175, 600, 200);
+							newUserFailFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+							newUserFailFrame.getContentPane().setLayout(null);
+							newUserFailFrame.setVisible(true);
+							
+							JLabel userCreatedFailLabel = new JLabel();
+							userCreatedFailLabel.setText("Username is already taken");
+							userCreatedFailLabel.setBounds(50, 25, 800, 50);
+							newUserFailFrame.getContentPane().add(userCreatedFailLabel);
+							
+							JButton okButton2 = new JButton("Ok");
+							okButton2.setBounds(250, 75, 50, 25);
+							newUserFailFrame.getContentPane().add(okButton2); //difference between .getContentPane().add and .add.... both work the same?
+							
+							okButton2.addActionListener(new ActionListener()
+							{
+								public void actionPerformed(ActionEvent e)
+								{
+									newUserFailFrame.setVisible(false);
+								}
+							});
+						}
+					}
+				} 
+				catch (UnknownHostException e1)
+				{
+					e1.printStackTrace();
+				}
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnCreate.setBounds(236, 190, 115, 34);
+		frame.getContentPane().add(btnCreate);
 	}
 	
-	
-
-
+	private boolean Authenticate(String user, String pass, Socket clientSocket) throws IOException//authenticates with server and grants/denies access to HomeGUI
+	{
+		System.out.println("User is: " + user + " " + "Pass is: " +pass);
+		OutputStream outputStream = clientSocket.getOutputStream();
+		outputStream.write(("login " + user + " " + pass + "\n").getBytes()); //TODO: get response from server and return true or false based on msg.
+		InputStream inputStream = clientSocket.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		String line = reader.readLine();
+		System.out.print(line);
+		if (line != null)
+		{
+			//System.out.println("ClientGUI, msg received: " + line);
+			if (line.equals("yes"))
+			{
+				return true;
+			}
+			else 
+			{
+				return false;
+			}
+		}
+		else
+		{
+			System.out.println("no msg from server recieved :(");
+			return false;
+		}
+	}
 }
