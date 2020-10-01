@@ -16,12 +16,18 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 
 import org.mindrot.jbcrypt.BCrypt;
+import javax.swing.JCheckBox;
+import java.awt.Font;
+import javax.swing.JPasswordField;
 
 public class ClientGUI
 {
 	private JFrame frame, loginFailFrame;
 	private JTextField usernameTextField;
-	private JTextField passwordTextField;
+	private JPasswordField passwordField;
+	
+	/**
+	 * Launch the application.
 	
 	/**
 	 * Launch the application.
@@ -100,14 +106,9 @@ public class ClientGUI
 		
 		
 		usernameTextField = new JTextField();
-		usernameTextField.setBounds(67, 132, 115, 37);
+		usernameTextField.setBounds(86, 54, 172, 26);
 		frame.getContentPane().add(usernameTextField);
 		usernameTextField.setColumns(10);
-		
-		passwordTextField = new JTextField();
-		passwordTextField.setColumns(10);
-		passwordTextField.setBounds(236, 132, 115, 37);
-		frame.getContentPane().add(passwordTextField);
 		
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.addActionListener(new ActionListener() 
@@ -122,7 +123,7 @@ public class ClientGUI
 					
 					//retrieves username and password from text fields
 					String username = usernameTextField.getText();
-					String password = passwordTextField.getText();
+					String password = passwordField.getText();
 					
 					boolean access = Authenticate(username, password, clientSocket);
 					if (access == true)
@@ -170,13 +171,43 @@ public class ClientGUI
 				}
 			}
 		});
-		btnNewButton.setBounds(142, 180, 172, 34);
+		btnNewButton.setBounds(122, 136, 172, 34);
 		frame.getContentPane().add(btnNewButton);
+		
+		JLabel lblNewLabel = new JLabel("Username:");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNewLabel.setBounds(6, 59, 70, 14);
+		frame.getContentPane().add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Password:");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNewLabel_1.setBounds(6, 96, 70, 14);
+		frame.getContentPane().add(lblNewLabel_1);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds(86, 91, 172, 26);
+		frame.getContentPane().add(passwordField);
+		
+		JCheckBox showPassBox = new JCheckBox("Show Password");
+		showPassBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(showPassBox.isSelected())
+				{
+					passwordField.setEchoChar('\u0000');
+				}
+				else
+				passwordField.setEchoChar('*');
+			}
+		});
+		showPassBox.setBounds(275, 93, 123, 23);
+		frame.getContentPane().add(showPassBox);
+		
+		
+		
+		
+		
+
 		
 		
 	}
-	
-	
-
-
 }
