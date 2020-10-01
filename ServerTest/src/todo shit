@@ -4,3 +4,4 @@
 3) Add button to create / join a channel (HomeGUI)
 4) Add friends list shit (Server worker and HomeGUI)
 5) Make database for text channels (Server worker, HomeGUI)
+6) Double check private variable login (suppose to be for workers username.  Other methods use new variable login.

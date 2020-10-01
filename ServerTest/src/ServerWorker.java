@@ -1,10 +1,13 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import org.apache.commons.lang3.*;
@@ -22,6 +25,7 @@ public class ServerWorker extends Thread
 	private Server server;
 	private OutputStream outputStream;
 	private HashSet<String> topicSet = new HashSet<>();
+	private String authFile = "src\\authenticate.json";
 
 	public ServerWorker(Server server, Socket clientSocket) 
 	{
@@ -66,7 +70,7 @@ public class ServerWorker extends Thread
 				}
 				else if ("login".equalsIgnoreCase(cmd)) 
 				{
-					handleLogin(outputStream, tokens);
+					handleLogin(tokens);
 				}
 				else if ("msg".equalsIgnoreCase(cmd))
 				{
@@ -80,6 +84,10 @@ public class ServerWorker extends Thread
 				else if ("leave".equalsIgnoreCase(cmd))
 				{
 					handleLeave(tokens);
+				}
+				else if ("create".equalsIgnoreCase(cmd))
+				{
+					createUser(tokens);
 				}
 				else 
 				{
@@ -168,14 +176,14 @@ public class ServerWorker extends Thread
 		return login;
 	}
 	
-	private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException 
+	private void handleLogin(String[] tokens) throws IOException 
 	{
 		if (tokens.length == 3) 
 		{
 			String login = tokens[1];
 			String password = tokens[2];
 			
-			File file = new File("src\\authenticate.json");
+			File file = new File(authFile);
 			String content = FileUtils.readFileToString(file, "utf-8");
 			JSONObject pointer  = new JSONObject(content);
 			//JSONObject creds = pointer.getJSONObject("credentials");
@@ -196,7 +204,7 @@ public class ServerWorker extends Thread
 			
 			//if a user is found and the user has the correct password he is then logged in
 			//TODO: Eventually get rid of "authPass.equals(password)" and only use the password checking with checkPass
-			if (authPass != null  && (authPass.equals(password) || checkPass(password, authPass)))
+			if (authPass != null && checkPass(password, authPass))
 			 {
 				String msg = "yes\n";
 				try 
@@ -277,5 +285,63 @@ public class ServerWorker extends Thread
 			System.out.println("The password does not match.");
 			return false;
 		}
+	}
+	private void createUser(String[] tokens) throws IOException
+	{
+		String login = tokens[1];
+		String password = tokens[2];
+		String authUser;
+		
+		File file = new File(authFile);
+		String content = FileUtils.readFileToString(file, "utf-8");
+		JSONObject pointer  = new JSONObject(content);
+		JSONArray creds = pointer.getJSONArray("credentials");
+		
+		
+		//looks through the users in JSON to see which one is the desired account to compare
+		for (int i = 0; i < creds.length(); i++)
+		{
+			authUser = creds.getJSONObject(i).getString("username");
+			if (authUser.equals(login))
+			{
+				String msg = "Error username taken\n";
+				outputStream.write(msg.getBytes());
+				System.out.println("serverworker: username already taken");
+				break;
+			}
+			else
+			{
+				if (i == creds.length() - 1) //if no user is found
+				{
+					JSONObject newUser = new JSONObject();
+					String hashpw = hashPassword(password);
+					newUser.put("username", login);
+					newUser.put("password", hashpw);
+					creds.put(newUser);
+					JSONObject mainObject = new JSONObject();
+					mainObject.put("credentials", creds);
+					try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(authFile))) 
+					{
+						mainObject.write(writer);
+						writer.write("\n");
+						String msg = "User Created\n";
+						outputStream.write(msg.getBytes());
+						System.out.println("Serverworker: user created, and added to file");
+					}
+					catch (Exception e)
+					{
+						System.err.println("you done did fucked up a-aron:\n" + e.getMessage());
+					}
+				}
+				
+			}
+		}
+	}
+	
+	private String hashPassword(String plainTextPassword)
+	{
+		String hPass = BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+		System.out.println(hPass);
+	    return hPass;
 	}
 }
