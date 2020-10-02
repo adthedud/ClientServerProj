@@ -83,10 +83,6 @@ public class ClientGUI
 		frame.getContentPane().add(usernameTextField);
 		usernameTextField.setColumns(10);
 		
-		passwordTextField = new JTextField();
-		passwordTextField.setColumns(10);
-		passwordTextField.setBounds(236, 132, 115, 37);
-		frame.getContentPane().add(passwordTextField);
 		
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.addActionListener(new ActionListener() 
@@ -172,7 +168,7 @@ public class ClientGUI
 				try
 				{
 					String user = usernameTextField.getText();
-					String pass = passwordTextField.getText();
+					String pass = passwordField.getText();
 					
 
 					Socket clientSocket = new Socket("127.0.0.1", 8817);
@@ -248,27 +244,28 @@ public class ClientGUI
 				}
 			}
 		});
-		btnCreate.setBounds(236, 190, 115, 34);
+		btnCreate.setBounds(122, 190, 172, 34);
 		frame.getContentPane().add(btnCreate);
-	}
 	
-	passwordField = new JPasswordField();
-	passwordField.setBounds(86, 91, 172, 26);
-	frame.getContentPane().add(passwordField);
 	
-	JCheckBox showPassBox = new JCheckBox("Show Password");
-	showPassBox.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			if(showPassBox.isSelected())
-			{
-				passwordField.setEchoChar('\u0000');
+		passwordField = new JPasswordField();
+		passwordField.setBounds(86, 91, 172, 26);
+		frame.getContentPane().add(passwordField);
+		
+		JCheckBox showPassBox = new JCheckBox("Show Password");
+		showPassBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(showPassBox.isSelected())
+				{
+					passwordField.setEchoChar('\u0000');
+				}
+				else
+				passwordField.setEchoChar('*');
 			}
-			else
-			passwordField.setEchoChar('*');
-		}
-	});
-	showPassBox.setBounds(275, 93, 123, 23);
-	frame.getContentPane().add(showPassBox);
+		});
+		showPassBox.setBounds(275, 93, 123, 23);
+		frame.getContentPane().add(showPassBox);
+	}
 	
 	private boolean Authenticate(String user, String pass, Socket clientSocket) throws IOException//authenticates with server and grants/denies access to HomeGUI
 	{
