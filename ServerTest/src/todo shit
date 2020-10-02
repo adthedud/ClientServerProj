@@ -1,7 +1,25 @@
 1) Authentication: json file on server, server will pull from this to check clients user:pass  (ServerWorker)
 		-->	json needs to include: user, pass, friends list, subscribed channels
-2) Create button to create account (ClientGUI)
+		
 3) Add button to create / join a channel (HomeGUI)
 4) Add friends list shit (Server worker and HomeGUI)
 5) Make database for text channels (Server worker, HomeGUI)
 6) Double check private variable login (suppose to be for workers username.  Other methods use new variable login.
+7) Fix logout button
+8) Verify server keeps track of online users correctly (login/logout)
+9) Upon exiting application, close socket
+10) Ability to see online users (HomeGUI)
+11) Ability to private message friends
+12) Add new class to hold all serverWorker methods
+
+
+
+Methods for ModifyJSON.java
+
+	//getJSONArray(String field){} return JSONArray (Credentials) 		//get Credentials array
+	//getArraySubset(JSONArray creds, String user, String field)		//get friendsList or channels array
+	doesExist(String field, String value){} return boolean 	        //checks if value exists
+	//getValue(String field, String username, JSONArray array){} returns String (channel1, someone, adam, $2a$10$ybkG8...zYe9I18gG6)
+	//createJSONObject(String username, String password)	//add value to field
+	addJSONArrayElement(String field, String username, String value) //adding String to friendsList or channels
+	removeJSONString(String field, String username, String value)	//remove value from friendsList or channels

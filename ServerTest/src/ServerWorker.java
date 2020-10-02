@@ -18,7 +18,7 @@ import org.json.JSONPointerException;
 import org.apache.commons.io.FileUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
-public class ServerWorker extends Thread
+public class ServerWorker extends Thread 
 {
 	private Socket clientSocket;
 	private String login = null;
@@ -26,13 +26,16 @@ public class ServerWorker extends Thread
 	private OutputStream outputStream;
 	private HashSet<String> topicSet = new HashSet<>();
 	private String authFile = "src\\authenticate.json";
+	private ModifyJSON modify = new ModifyJSON();
 
+	//Constructor
 	public ServerWorker(Server server, Socket clientSocket) 
 	{
 		this.server = server;
 		this.clientSocket = clientSocket;
 	}
-
+	
+	//Program execution starts here
 	public void run() 
 	{
 		try 
@@ -49,8 +52,7 @@ public class ServerWorker extends Thread
 		}
 	}
 	
-
-	
+	//Accepts connection from user and listens for input
 	private void handleClientSocket() throws IOException, InterruptedException 
 	{
 		InputStream inputStream = clientSocket.getInputStream();
@@ -98,6 +100,7 @@ public class ServerWorker extends Thread
 		}
 	}
 	
+	//Removes user from topic
 	private void handleLeave(String[] tokens) 
 	{
 		if(tokens.length > 1)
@@ -107,9 +110,8 @@ public class ServerWorker extends Thread
 				topicSet.remove(tokens[1]);	
 			}
 		}
-			
 	}
-
+	
 	public boolean isMemberOfTopic(String topic)
 	{
 		return topicSet.contains(topic);
@@ -119,12 +121,9 @@ public class ServerWorker extends Thread
 	{
 		if (tokens.length > 1)
 		{
-			
 			String topic = tokens[1];
 			topicSet.add(topic);
 		}
-			
-		
 	}
 
 	// msg #topic body
@@ -132,7 +131,6 @@ public class ServerWorker extends Thread
 	{
 		String sendTo = tokens[1];
 		String body = tokens[2];
-		
 		boolean isTopic = sendTo.charAt(0) == '#';
 		
 		List<ServerWorker> workerList = server.getWorkerList();
@@ -176,40 +174,27 @@ public class ServerWorker extends Thread
 		return login;
 	}
 	
+	//Authenticates user and accepts/denies access
 	private void handleLogin(String[] tokens) throws IOException 
 	{
 		if (tokens.length == 3) 
 		{
 			String login = tokens[1];
 			String password = tokens[2];
-			
-			File file = new File(authFile);
-			String content = FileUtils.readFileToString(file, "utf-8");
-			JSONObject pointer  = new JSONObject(content);
-			//JSONObject creds = pointer.getJSONObject("credentials");
-			JSONArray creds = pointer.getJSONArray("credentials");
+			JSONArray creds = modify.getJSONArray("credentials", null);
 			String authUser;
 			String authPass = null;
 			
 			//looks through the users in JSON to see which one is the desired account to compare
-			for(int i = 0; i < creds.length(); i++)
-			{
-				authUser = creds.getJSONObject(i).getString("username");
-				if (authUser.equals(login))
-				{
-					authPass = creds.getJSONObject(i).getString("password");
-					break;
-				}
-			}
+			authUser = modify.getValue("username", login, creds);
+			authPass = modify.getValue("password", login, creds);
 			
-			//if a user is found and the user has the correct password he is then logged in
-			//TODO: Eventually get rid of "authPass.equals(password)" and only use the password checking with checkPass
+			//if a user is found and the user has the correct password, they are logged in
 			if (authPass != null && checkPass(password, authPass))
 			 {
 				String msg = "yes\n";
 				try 
 				{
-					//System.out.print(msg);
 					outputStream.write(msg.getBytes());
 					this.login = login;
 				} 
@@ -242,7 +227,6 @@ public class ServerWorker extends Thread
 						worker.send(onlineMsg);												
 					}					
 				}
-				
 			}
 			else 
 			{
@@ -257,8 +241,8 @@ public class ServerWorker extends Thread
 				}
 			}
 		}
-		
 	}
+	
 		//testing this out
 	private void send(String msg) throws IOException
 	{
@@ -272,6 +256,7 @@ public class ServerWorker extends Thread
 		}
 	}
 	
+	//checks if entered password is correct
 	private boolean checkPass(String plainPassword, String hashedPassword) 
 	{
 		if (BCrypt.checkpw(plainPassword, hashedPassword))
@@ -279,69 +264,33 @@ public class ServerWorker extends Thread
 			System.out.println("The password matches.");
 			return true;
 		}
-		
 		else
 		{
 			System.out.println("The password does not match.");
 			return false;
 		}
 	}
+	
+	//Creates a new user
 	private void createUser(String[] tokens) throws IOException
 	{
 		String login = tokens[1];
 		String password = tokens[2];
 		String authUser;
+		JSONArray creds = modify.getJSONArray("credentials", null);	
 		
-		File file = new File(authFile);
-		String content = FileUtils.readFileToString(file, "utf-8");
-		JSONObject pointer  = new JSONObject(content);
-		JSONArray creds = pointer.getJSONArray("credentials");
-		
-		
-		//looks through the users in JSON to see which one is the desired account to compare
-		for (int i = 0; i < creds.length(); i++)
+		authUser = modify.getValue("username", login, creds);
+		if (authUser == null)
 		{
-			authUser = creds.getJSONObject(i).getString("username");
-			if (authUser.equals(login))
-			{
-				String msg = "Error username taken\n";
-				outputStream.write(msg.getBytes());
-				System.out.println("serverworker: username already taken");
-				break;
-			}
-			else
-			{
-				if (i == creds.length() - 1) //if no user is found
-				{
-					JSONObject newUser = new JSONObject();
-					String hashpw = hashPassword(password);
-					newUser.put("username", login);
-					newUser.put("password", hashpw);
-					creds.put(newUser);
-					JSONObject mainObject = new JSONObject();
-					mainObject.put("credentials", creds);
-					try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(authFile))) 
-					{
-						mainObject.write(writer);
-						writer.write("\n");
-						String msg = "User Created\n";
-						outputStream.write(msg.getBytes());
-						System.out.println("Serverworker: user created, and added to file");
-					}
-					catch (Exception e)
-					{
-						System.err.println("you done did fucked up a-aron:\n" + e.getMessage());
-					}
-				}
-				
-			}
+			modify.createJSONObject(login, password, creds);
+			String msg = "User Created\n";
+			outputStream.write(msg.getBytes());
 		}
-	}
-	
-	private String hashPassword(String plainTextPassword)
-	{
-		String hPass = BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
-		System.out.println(hPass);
-	    return hPass;
+		else
+		{
+			String msg = "Error username taken\n";
+			outputStream.write(msg.getBytes());
+			System.out.println("serverworker: username already taken");
+		}
 	}
 }
