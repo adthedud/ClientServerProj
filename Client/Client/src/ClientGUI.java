@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,6 +86,7 @@ public class ClientGUI
 		
 		
 		JButton btnNewButton = new JButton("Login");
+		btnNewButton.setMnemonic(KeyEvent.VK_ENTER);
 		btnNewButton.addActionListener(new ActionListener() 
 		{
 			
@@ -123,6 +125,7 @@ public class ClientGUI
 						
 						JButton okButton = new JButton("Ok");
 						okButton.setBounds(250, 75, 50, 25);
+						okButton.setMnemonic(KeyEvent.VK_ENTER);
 						loginFailFrame.getContentPane().add(okButton); //difference between .getContentPane().add and .add.... both work the same?
 						
 						okButton.addActionListener(new ActionListener()
@@ -197,6 +200,7 @@ public class ClientGUI
 							
 							JButton okButton2 = new JButton("Ok");
 							okButton2.setBounds(250, 75, 50, 25);
+							okButton2.setMnemonic(KeyEvent.VK_ENTER);
 							userCreatedFrame.getContentPane().add(okButton2); //difference between .getContentPane().add and .add.... both work the same?
 							
 							okButton2.addActionListener(new ActionListener()
