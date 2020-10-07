@@ -261,12 +261,10 @@ public class ServerWorker extends Thread
 	{
 		if (BCrypt.checkpw(plainPassword, hashedPassword))
 		{
-			System.out.println("The password matches.");
 			return true;
 		}
 		else
 		{
-			System.out.println("The password does not match.");
 			return false;
 		}
 	}
@@ -290,7 +288,6 @@ public class ServerWorker extends Thread
 		{
 			String msg = "Error username taken\n";
 			outputStream.write(msg.getBytes());
-			System.out.println("serverworker: username already taken");
 		}
 	}
 }

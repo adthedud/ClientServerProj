@@ -11,7 +11,7 @@
 10) Ability to see online users (HomeGUI)
 11) Ability to private message friends
 12) Add new class to hold all serverWorker methods
-
+13) Consider closing the client and server socket. i.e. when and how to do this?
 
 
 Methods for ModifyJSON.java
@@ -21,5 +21,5 @@ Methods for ModifyJSON.java
 	doesExist(String field, String value){} return boolean 	        //checks if value exists
 	//getValue(String field, String username, JSONArray array){} returns String (channel1, someone, adam, $2a$10$ybkG8...zYe9I18gG6)
 	//createJSONObject(String username, String password)	//add value to field
-	addJSONArrayElement(String field, String username, String value) //adding String to friendsList or channels
+	addJSONArrayElement(String field, String username, String value) //adding value to field = (friendsList or channels) for username = (adam, jake, etc)
 	removeJSONString(String field, String username, String value)	//remove value from friendsList or channels
