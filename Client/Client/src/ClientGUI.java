@@ -42,7 +42,7 @@ public class ClientGUI
 	 */
 	public static void main(String[] args) 
 	{
-		System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk-13.0.2\\bin\\cacerts.jks");
+		System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk-14.0.2\\bin\\cacerts.jks");  //Adam is jdk-13.0.2  Jake is jdk-14.0.2
 		System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
 		EventQueue.invokeLater(new Runnable()  //This is what you have to do to run multiple thread for swing ui?
 		{

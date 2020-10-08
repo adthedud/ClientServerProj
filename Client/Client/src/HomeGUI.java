@@ -25,6 +25,7 @@ public class HomeGUI extends JFrame
 	private JTextField textField;
 	private Socket clientSocket;
 	OutputStream outputStream;
+	private JTextField msgToSendTxtField;
 	
 
 	/**
@@ -77,7 +78,7 @@ public class HomeGUI extends JFrame
 				return values[index];
 			}
 		});
-		channelList.setBounds(10, 36, 106, 316);
+		channelList.setBounds(10, 36, 106, 289);
 		contentPane.add(channelList);
 		
 		JLabel channelLabel = new JLabel("Channels");
@@ -99,9 +100,9 @@ public class HomeGUI extends JFrame
 		contentPane.add(currentChannelLabel);
 		
 		//This Button Joins a selected channel when clicked
-		JButton joinChannelButton = new JButton("Join Channel");
-		joinChannelButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		joinChannelButton.addActionListener(new ActionListener() 
+		JButton createChannelButton = new JButton("Create Channel");
+		createChannelButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		createChannelButton.addActionListener(new ActionListener() //TODO: Need to change these to implement create channel instead of get channel
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -110,8 +111,8 @@ public class HomeGUI extends JFrame
 				currentChannelLabel.setText(channelList.getSelectedValue().toString());
 			}
 		});
-		joinChannelButton.setBounds(10, 358, 106, 23);
-		contentPane.add(joinChannelButton);
+		createChannelButton.setBounds(10, 335, 106, 23);
+		contentPane.add(createChannelButton);
 		
 		//This Button is disconnects from the Server and closes application
 		JButton logoutButton = new JButton("Logout");
@@ -122,7 +123,7 @@ public class HomeGUI extends JFrame
 				try 
 				{
 					outputStream.write(("quit\n").getBytes());
-					clientSocket.close();
+					//clientSocket.close(); Server should do this in handleLogout
 					HomeGUI.this.setVisible(false);
 					
 					
@@ -133,8 +134,56 @@ public class HomeGUI extends JFrame
 				}
 			}
 		});
-		logoutButton.setBounds(599, 0, 89, 23);
+		logoutButton.setBounds(553, 358, 89, 23);
 		contentPane.add(logoutButton);
+		
+		JButton sendMsgButton = new JButton("Send");
+		sendMsgButton.setBounds(508, 389, 85, 21);
+		contentPane.add(sendMsgButton);
+		
+		msgToSendTxtField = new JTextField();
+		msgToSendTxtField.setBounds(136, 390, 372, 19);
+		contentPane.add(msgToSendTxtField);
+		msgToSendTxtField.setColumns(10);
+		
+		JList<String> friendList = new JList<String>();
+		friendList.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		friendList.setModel(new AbstractListModel() 
+		{
+			String[] values = new String[] {"Adam", "Jake"};
+			public int getSize() 
+			{
+				return values.length;
+			}
+			public Object getElementAt(int index) 
+			{
+				return values[index];
+			}
+		});
+		friendList.setBounds(531, 40, 145, 202);
+		contentPane.add(friendList);
+		
+		JButton addFriendButton = new JButton("Add Friend");
+		addFriendButton.setBounds(553, 252, 106, 23);
+		contentPane.add(addFriendButton);
+		
+		JButton removeFriendButton = new JButton("Remove Friend");
+		removeFriendButton.setBounds(553, 288, 106, 23);
+		contentPane.add(removeFriendButton);
+		
+		JButton leaveChannelButton = new JButton("Leave Channel");
+		leaveChannelButton.setBounds(10, 389, 106, 21);
+		contentPane.add(leaveChannelButton);
+		
+		JButton joinChannelButton = new JButton("Join Channel");
+		joinChannelButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		joinChannelButton.setBounds(10, 362, 106, 23);
+		contentPane.add(joinChannelButton);
+		
+		JLabel friendslistLabel = new JLabel("Friends List");
+		friendslistLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		friendslistLabel.setBounds(537, 14, 122, 14);
+		contentPane.add(friendslistLabel);
 		
 	}
 	
@@ -151,7 +200,4 @@ public class HomeGUI extends JFrame
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
 }
