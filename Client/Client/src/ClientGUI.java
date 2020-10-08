@@ -20,12 +20,19 @@ import org.mindrot.jbcrypt.BCrypt;
 import javax.swing.JCheckBox;
 import java.awt.Font;
 import javax.swing.JPasswordField;
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 public class ClientGUI
 {
 	private JFrame frame, loginFailFrame, userCreatedFrame, newUserFailFrame;
 	private JTextField usernameTextField;
 	private JPasswordField passwordField;
+	private static final String[] protocols = new String[] {"TLSv1.3"};
+    private static final String[] cipher_suites = new String[] {"TLS_AES_128_GCM_SHA256"};
 	
 	/**
 	 * Launch the application.
@@ -35,6 +42,8 @@ public class ClientGUI
 	 */
 	public static void main(String[] args) 
 	{
+		System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk-13.0.2\\bin\\cacerts.jks");
+		System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
 		EventQueue.invokeLater(new Runnable()  //This is what you have to do to run multiple thread for swing ui?
 		{
 			public void run() 
@@ -95,7 +104,20 @@ public class ClientGUI
 				try 
 				{
 					//Creates connection to server
-					Socket clientSocket = new Socket("127.0.0.1", 8817);
+					SSLSocketFactory factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+		            SSLSocket clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
+		            clientSocket.setEnabledProtocols(protocols);
+			        clientSocket.setEnabledCipherSuites(cipher_suites);
+
+					
+//					SocketFactory basicSocketFactory = SocketFactory.getDefault();
+//					Socket clientSocket = basicSocketFactory.createSocket("localhost",8817);
+//					
+//					SSLSocketFactory sslssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
+//				    clientSocket = (SSLSocket) sslssf.createSocket(clientSocket,"localhost", 8817,true);
+				    
+				    clientSocket.startHandshake();
+					//SSLSocket clientSocket = new SSLSocket("127.0.0.1", 8817);
 					
 					//retrieves username and password from text fields
 					String username = usernameTextField.getText();
