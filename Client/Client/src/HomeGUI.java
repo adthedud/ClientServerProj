@@ -15,18 +15,23 @@ import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Button;
+import javax.swing.JTextArea;
 
 public class HomeGUI extends JFrame
 {
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextArea textField;
 	private Socket clientSocket;
 	OutputStream outputStream;
 	InputStream inputStream;
@@ -98,7 +103,7 @@ public class HomeGUI extends JFrame
 		channelLabel.setBounds(10, 11, 122, 14);
 		contentPane.add(channelLabel);
 		
-		textField = new JTextField();
+		textField = new JTextArea();
 		textField.setBackground(Color.WHITE);
 		textField.setEditable(false);
 		textField.setBounds(136, 37, 372, 344);
@@ -194,6 +199,38 @@ public class HomeGUI extends JFrame
 		friendslistLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		friendslistLabel.setBounds(537, 14, 122, 14);
 		contentPane.add(friendslistLabel);
+		
+		JButton retrieveTextFileBtn = new JButton("Retrieve Text file");
+		retrieveTextFileBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				OutputStream outputStream;
+				try {
+					outputStream = clientSocket.getOutputStream();
+					outputStream.write(("select\n").getBytes()); //TODO: get response from server and return true or false based on msg.
+					InputStream inputStream = clientSocket.getInputStream();
+					DataInputStream dis = new DataInputStream(clientSocket.getInputStream()); 
+					String k = "";
+					String fullTextFile = "";
+					while(!(k = dis.readUTF()).equals("EndOfFile\n"))
+                    {          
+						if(!k.equals("EndOfFile"))
+						{
+							fullTextFile += k + "\n";
+	                        System.out.println(k);
+						}						
+                    }					
+					textField.setText(fullTextFile);
+                    System.out.println("File Transferred");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		retrieveTextFileBtn.setFont(new Font("Tahoma", Font.PLAIN, 8));
+		retrieveTextFileBtn.setBounds(515, 322, 116, 23);
+		contentPane.add(retrieveTextFileBtn);
 	}
 	
 	//sets this client socket to the client socket from ClientGUI

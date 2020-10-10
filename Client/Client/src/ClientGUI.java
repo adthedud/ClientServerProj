@@ -116,8 +116,8 @@ public class ClientGUI
 				try 
 				{
 					//Creates connection to server
-					SSLSocketFactory factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
-		            SSLSocket clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
+					factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+		            clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
 		            clientSocket.setEnabledProtocols(protocols);
 			        clientSocket.setEnabledCipherSuites(cipher_suites);
 

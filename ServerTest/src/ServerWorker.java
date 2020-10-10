@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -92,6 +95,10 @@ public class ServerWorker extends Thread
 				{
 					createUser(tokens);
 				}
+				else if ("select".equalsIgnoreCase(cmd))
+				{
+					sendChannelText(tokens);
+				}
 				else 
 				{
 					String msg = "Unknown " + cmd + "\n";
@@ -101,6 +108,24 @@ public class ServerWorker extends Thread
 		}
 	}
 	
+	private void sendChannelText(String[] tokens) throws IOException {
+		try 
+		{
+			BufferedReader br = new BufferedReader(new FileReader("src\\worldChat.txt"));
+			DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream()); 
+            String k;
+            while((k = br.readLine()) != null)
+            {            	
+                dos.writeUTF(k); 
+            }       
+            dos.writeUTF("EndOfFile\n");
+            
+            System.out.println("Transfer Complete"); 
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}		
+	}
+
 	private void handleLeave(String[] tokens) 
 	{
 		if(tokens.length > 1)
