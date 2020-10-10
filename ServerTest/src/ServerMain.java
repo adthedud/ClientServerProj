@@ -2,11 +2,8 @@ import java.io.File;
 import java.security.Provider;
 import java.security.Security;
 
-
-
 public class ServerMain extends Thread 
-{
-	
+{	
 	public static void main(String[] args)
 	{
 		//Security.addProvider(new Provider());

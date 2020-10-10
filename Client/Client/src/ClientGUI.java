@@ -295,7 +295,7 @@ public class ClientGUI
 	
 	private boolean Authenticate(String user, String pass, Socket clientSocket) throws IOException//authenticates with server and grants/denies access to HomeGUI
 	{
-		System.out.println("User is: " + user + " " + "Pass is: " +pass);
+		System.out.println("User is: " + user + " " + "Pass is: " + pass);
 		OutputStream outputStream = clientSocket.getOutputStream();
 		outputStream.write(("login " + user + " " + pass + "\n").getBytes()); //TODO: get response from server and return true or false based on msg.
 		InputStream inputStream = clientSocket.getInputStream();
