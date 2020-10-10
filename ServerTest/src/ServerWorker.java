@@ -54,8 +54,6 @@ public class ServerWorker extends Thread
 		}
 	}
 	
-
-	
 	private void handleClientSocket() throws IOException, InterruptedException 
 	{
 		InputStream inputStream = clientSocket.getInputStream();
@@ -112,7 +110,6 @@ public class ServerWorker extends Thread
 				topicSet.remove(tokens[1]);	
 			}
 		}
-			
 	}
 
 	public boolean isMemberOfTopic(String topic)
@@ -128,8 +125,6 @@ public class ServerWorker extends Thread
 			String topic = tokens[1];
 			topicSet.add(topic);
 		}
-			
-		
 	}
 
 	// msg #topic body
@@ -247,7 +242,6 @@ public class ServerWorker extends Thread
 						worker.send(onlineMsg);												
 					}					
 				}
-				
 			}
 			else 
 			{
@@ -262,7 +256,6 @@ public class ServerWorker extends Thread
 				}
 			}
 		}
-		
 	}
 		//testing this out
 	private void send(String msg) throws IOException

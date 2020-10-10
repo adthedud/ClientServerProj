@@ -42,7 +42,7 @@ public class ClientGUI
 	 */
 	public static void main(String[] args) 
 	{
-		System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk-13.0.2\\bin\\cacerts.jks");
+		System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk-14.0.2\\bin\\cacerts.jks");  //Adam is jdk-13.0.2  Jake is jdk-14.0.2
 		System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
 		EventQueue.invokeLater(new Runnable()  //This is what you have to do to run multiple thread for swing ui?
 		{
@@ -295,7 +295,7 @@ public class ClientGUI
 	
 	private boolean Authenticate(String user, String pass, Socket clientSocket) throws IOException//authenticates with server and grants/denies access to HomeGUI
 	{
-		System.out.println("User is: " + user + " " + "Pass is: " +pass);
+		System.out.println("User is: " + user + " " + "Pass is: " + pass);
 		OutputStream outputStream = clientSocket.getOutputStream();
 		outputStream.write(("login " + user + " " + pass + "\n").getBytes()); //TODO: get response from server and return true or false based on msg.
 		InputStream inputStream = clientSocket.getInputStream();

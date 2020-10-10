@@ -12,6 +12,7 @@
 11) Ability to private message friends
 12) Add new class to hold all serverWorker methods
 13) Consider closing the client and server socket. i.e. when and how to do this?
+14) Check out how to do testing in JUNIT? Any testing to work with java.swing
 
 
 Methods for ModifyJSON.java
