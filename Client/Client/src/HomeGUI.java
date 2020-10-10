@@ -36,7 +36,8 @@ public class HomeGUI extends JFrame
 	OutputStream outputStream;
 	InputStream inputStream;
 	private JTextField msgToSendTxtField;
-	
+	private String selectedChannel = "World Chat";
+	private String channelText = "";
 	/**
 	 * Launch the application.
 	 */
@@ -65,39 +66,14 @@ public class HomeGUI extends JFrame
 	@SuppressWarnings("unchecked")  //added to suppress warning at line 70 channellist.setModel(...)
 	public HomeGUI() 
 	{
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 447);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		JList channelList = new JList();
-		ListSelectionModel listSelect = channelList.getSelectionModel();
-//		listSelect.addListSelectionListener(new ListSelectionListener ()
-//				{
-//					@Override
-//					public void valueChanged(ListSelectionEvent e)
-//					{
-//						// TODO Auto-generated method stub
-//					}
-//				});
-		channelList.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		channelList.setModel(new AbstractListModel() 
-		{
-			String[] values = new String[] {"World Chat", "Channel 2"};
-			public int getSize() 
-			{
-				return values.length;
-			}
-			public Object getElementAt(int index) 
-			{
-				return values[index];
-			}
-		});
-		channelList.setBounds(10, 36, 106, 289);
-		contentPane.add(channelList);
-		
+
 		JLabel channelLabel = new JLabel("Channels");
 		channelLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		channelLabel.setBounds(10, 11, 122, 14);
@@ -109,12 +85,51 @@ public class HomeGUI extends JFrame
 		textField.setBounds(136, 37, 372, 344);
 		contentPane.add(textField);
 		textField.setColumns(10);
+		try
+		{
+			channelText = getChannelText("select World Chat\n");
+			textField.setText(channelText);
+		} 
+		catch (IOException e2)
+		{
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		
 		JLabel currentChannelLabel = new JLabel("World Chat");
 		currentChannelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		currentChannelLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		currentChannelLabel.setBounds(136, 13, 372, 23);
 		contentPane.add(currentChannelLabel);
+		
+		//channelList is the list of channels, includes listener to change text when channel is selected
+		JList channelList = new JList();
+		ListSelectionListener listListener = new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				boolean adjusting = e.getValueIsAdjusting();
+				if (!adjusting)
+				{
+					selectedChannel = channelList.getSelectedValue().toString();
+					System.out.println(selectedChannel);
+					currentChannelLabel.setText(selectedChannel);
+					String msg = "select " + selectedChannel + "\n";
+					try
+					{
+						channelText = getChannelText(msg);
+						textField.setText(channelText);
+					} 
+					catch (IOException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
+		};
+	
 		
 		//This Button Joins a selected channel when clicked
 		JButton createChannelButton = new JButton("Create Channel");
@@ -123,9 +138,9 @@ public class HomeGUI extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				int channelIndex;
-				channelIndex = channelList.getSelectedIndex();
-				currentChannelLabel.setText(channelList.getSelectedValue().toString());
+//				int channelIndex;
+//				channelIndex = channelList.getSelectedIndex();
+//				currentChannelLabel.setText(channelList.getSelectedValue().toString());
 			}
 		});
 		createChannelButton.setBounds(10, 335, 106, 23);
@@ -246,5 +261,17 @@ public class HomeGUI extends JFrame
 		{
 			e.printStackTrace();
 		}
+	}
+	public String getChannelText(String msg) throws IOException
+	{
+		outputStream.write(msg.getBytes());
+		inputStream = clientSocket.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		String line, channelText = null;	
+		while ((line = reader.readLine()) != null)
+		{
+			channelText += line;
+		}
+		return channelText;
 	}
 }
