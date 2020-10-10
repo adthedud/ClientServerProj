@@ -34,6 +34,8 @@ public class ClientGUI
 	private static final String[] protocols = new String[] {"TLSv1.3"};
     private static final String[] cipher_suites = new String[] {"TLS_AES_128_GCM_SHA256"};
 	
+    private SSLSocketFactory factory;
+    private SSLSocket clientSocket;
 	/**
 	 * Launch the application.
 	
@@ -42,7 +44,7 @@ public class ClientGUI
 	 */
 	public static void main(String[] args) 
 	{
-		System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk-14.0.2\\bin\\cacerts.jks");  //Adam is jdk-13.0.2  Jake is jdk-14.0.2
+		System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk-13.0.2\\bin\\cacerts.jks");  //Adam is jdk-13.0.2  Jake is jdk-14.0.2
 		System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
 		EventQueue.invokeLater(new Runnable()  //This is what you have to do to run multiple thread for swing ui?
 		{
@@ -71,16 +73,20 @@ public class ClientGUI
 
 	/**
 	 * Create the application.
+	 * @throws IOException 
+	 * @throws UnknownHostException 
 	 */
-	public ClientGUI() 
+	public ClientGUI() throws UnknownHostException, IOException 
 	{
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @throws IOException 
+	 * @throws UnknownHostException 
 	 */
-	private void initialize() 
+	private void initialize() throws UnknownHostException, IOException 
 	{
 		frame = new JFrame("Login");
 		frame.setBounds(100, 100, 450, 300);
@@ -93,6 +99,12 @@ public class ClientGUI
 		frame.getContentPane().add(usernameTextField);
 		usernameTextField.setColumns(10);
 		
+		factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+        clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
+        clientSocket.setEnabledProtocols(protocols);
+        clientSocket.setEnabledCipherSuites(cipher_suites);
+
+	    clientSocket.startHandshake();
 		
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.setMnemonic(KeyEvent.VK_ENTER);
@@ -109,15 +121,7 @@ public class ClientGUI
 		            clientSocket.setEnabledProtocols(protocols);
 			        clientSocket.setEnabledCipherSuites(cipher_suites);
 
-					
-//					SocketFactory basicSocketFactory = SocketFactory.getDefault();
-//					Socket clientSocket = basicSocketFactory.createSocket("localhost",8817);
-//					
-//					SSLSocketFactory sslssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
-//				    clientSocket = (SSLSocket) sslssf.createSocket(clientSocket,"localhost", 8817,true);
-				    
 				    clientSocket.startHandshake();
-					//SSLSocket clientSocket = new SSLSocket("127.0.0.1", 8817);
 					
 					//retrieves username and password from text fields
 					String username = usernameTextField.getText();
@@ -195,8 +199,6 @@ public class ClientGUI
 					String user = usernameTextField.getText();
 					String pass = passwordField.getText();
 					
-
-					Socket clientSocket = new Socket("127.0.0.1", 8817);
 					OutputStream outputStream = clientSocket.getOutputStream();
 					String msg = "create " + user +" " + pass + "\n";
 					System.out.println(msg);
