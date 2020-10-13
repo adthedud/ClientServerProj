@@ -97,7 +97,8 @@ public class ServerWorker extends Thread
 				}
 				else if ("select".equalsIgnoreCase(cmd))
 				{
-					sendChannelText(tokens);
+					String[] tokensMsg = StringUtils.split(line, null, 2);
+					sendChannelText(tokensMsg);
 				}
 				else 
 				{
@@ -111,7 +112,7 @@ public class ServerWorker extends Thread
 	private void sendChannelText(String[] tokens) throws IOException {
 		try 
 		{
-			BufferedReader br = new BufferedReader(new FileReader("src\\worldChat.txt"));
+			BufferedReader br = new BufferedReader(new FileReader("src\\"+tokens[1]+".txt"));
 			DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream()); 
             String k;
             while((k = br.readLine()) != null)

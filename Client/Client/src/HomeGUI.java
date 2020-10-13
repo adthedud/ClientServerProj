@@ -231,37 +231,6 @@ public class HomeGUI extends JFrame
 		friendslistLabel.setBounds(537, 14, 122, 14);
 		contentPane.add(friendslistLabel);
 		
-		JButton retrieveTextFileBtn = new JButton("Retrieve Text file");
-		retrieveTextFileBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				OutputStream outputStream;
-				try {
-					outputStream = clientSocket.getOutputStream();
-					outputStream.write(("select\n").getBytes()); //TODO: get response from server and return true or false based on msg.
-					InputStream inputStream = clientSocket.getInputStream();
-					DataInputStream dis = new DataInputStream(clientSocket.getInputStream()); 
-					String k = "";
-					String fullTextFile = "";
-					while(!(k = dis.readUTF()).equals("EndOfFile\n"))
-                    {          
-						if(!k.equals("EndOfFile"))
-						{
-							fullTextFile += k + "\n";
-	                        System.out.println(k);
-						}						
-                    }					
-					textField.setText(fullTextFile);
-                    System.out.println("File Transferred");
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-			}
-		});
-		retrieveTextFileBtn.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		retrieveTextFileBtn.setBounds(515, 322, 116, 23);
-		contentPane.add(retrieveTextFileBtn);
 	}
 	
 	//sets this client socket to the client socket from ClientGUI
@@ -278,16 +247,22 @@ public class HomeGUI extends JFrame
 			e.printStackTrace();
 		}
 	}
+
 	public String getChannelText(String msg) throws IOException
 	{
-		outputStream.write(msg.getBytes());
-		inputStream = clientSocket.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-		String line, channelText = null;	
-		while ((line = reader.readLine()) != null)
-		{
-			channelText += line;
-		}
-		return channelText;
+		outputStream = clientSocket.getOutputStream();
+		outputStream.write((msg).getBytes());
+		DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
+		String k = "";
+		String fullTextFile = "";
+		while(!(k = dis.readUTF()).equals("EndOfFile\n"))
+        {          
+			if(!k.equals("EndOfFile"))
+			{
+				fullTextFile += k + "\n";
+			}						
+        }					
+		
+		return fullTextFile;
 	}
 }
