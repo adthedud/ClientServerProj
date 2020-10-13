@@ -85,19 +85,19 @@ public class HomeGUI extends JFrame
 		textField.setBounds(136, 37, 372, 344);
 		contentPane.add(textField);
 		textField.setColumns(10);
-		try
-		{
-			channelText = getChannelText("select World Chat\n");
-			textField.setText(channelText);
-		} 
-		catch (IOException e2)
-		{
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+//		try
+//		{
+//			channelText = getChannelText("select worldChat\n");
+//			textField.setText(channelText);
+//		} 
+//		catch (IOException e2)
+//		{
+//			// TODO Auto-generated catch block
+//			e2.printStackTrace();
+//		}
 		
 		
-		JLabel currentChannelLabel = new JLabel("World Chat");
+		JLabel currentChannelLabel = new JLabel("worldChat");
 		currentChannelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		currentChannelLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		currentChannelLabel.setBounds(136, 13, 372, 23);
@@ -105,6 +105,8 @@ public class HomeGUI extends JFrame
 		
 		//channelList is the list of channels, includes listener to change text when channel is selected
 		JList channelList = new JList();
+		
+		
 		ListSelectionListener listListener = new ListSelectionListener()
 		{
 			@Override
@@ -129,8 +131,22 @@ public class HomeGUI extends JFrame
 				}
 			}
 		};
-	
-		
+		channelList.addListSelectionListener(listListener);
+		channelList.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		channelList.setModel(new AbstractListModel() 
+		{
+			String[] values = new String[] {"worldChat", "Channel 2"};
+			public int getSize() 
+			{
+				return values.length;
+			}
+			public Object getElementAt(int index) 
+			{
+				return values[index];
+			}
+		});
+		channelList.setBounds(10, 36, 106, 289);
+		contentPane.add(channelList);
 		//This Button Joins a selected channel when clicked
 		JButton createChannelButton = new JButton("Create Channel");
 		createChannelButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
