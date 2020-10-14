@@ -33,6 +33,10 @@ public class HomeGUI extends JFrame
 	private Socket clientSocket;
 	OutputStream outputStream;
 	InputStream inputStream;
+	private SSLSocket clientSocket;
+	private OutputStream outputStream;
+	private InputStream inputStream;
+	private DataInputStream dis;
 	private JTextField msgToSendTxtField;
 	private String selectedChannel = "World Chat";
 	private String channelText = "";
@@ -112,7 +116,7 @@ public class HomeGUI extends JFrame
 				if (!adjusting)
 				{
 					selectedChannel = channelList.getSelectedValue().toString();
-					System.out.println(selectedChannel);
+					//System.out.println(selectedChannel);
 					currentChannelLabel.setText(selectedChannel);
 					String msg = "select " + selectedChannel + "\n";
 					try
@@ -128,6 +132,23 @@ public class HomeGUI extends JFrame
 			}
 		};
 	
+		channelList.addListSelectionListener(listListener);
+		channelList.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		channelList.setModel(new AbstractListModel() 
+		{
+			String[] values = new String[] {"worldChat", "Channel 2"};
+			public int getSize() 
+			{
+				return values.length;
+			}
+			public Object getElementAt(int index) 
+			{
+				return values[index];
+			}
+		});
+		channelList.setBounds(10, 36, 106, 289);
+		contentPane.add(channelList);
+>>>>>>> stash
 		
 		//This Button Joins a selected channel when clicked
 		JButton createChannelButton = new JButton("Create Channel");
@@ -155,6 +176,7 @@ public class HomeGUI extends JFrame
 					outputStream.write(("quit\n").getBytes());
 					//clientSocket.close(); Server should do this in handleLogout
 					HomeGUI.this.setVisible(false);
+					//TODO: Need to close socket
 				} 
 				catch (IOException e1) 
 				{
@@ -166,8 +188,47 @@ public class HomeGUI extends JFrame
 		contentPane.add(logoutButton);
 		
 		JButton sendMsgButton = new JButton("Send");
+
+		sendMsgButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				//selectedChannel = channelList.getSelectedValue().toString();
+				String msg = "msg#"+ selectedChannel + "#" + msgToSendTxtField.getText() + "\n";
+				try
+				{
+					//SendTextToChannel(msg);
+					outputStream.write((msg).getBytes());
+				}
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
 		sendMsgButton.setBounds(508, 389, 85, 21);
 		contentPane.add(sendMsgButton);
+			
+		JButton addFriendButton = new JButton("Add Friend");
+		addFriendButton.setBounds(553, 252, 106, 23);
+		contentPane.add(addFriendButton);
+		
+		JButton removeFriendButton = new JButton("Remove Friend");
+		removeFriendButton.setBounds(553, 288, 106, 23);
+		contentPane.add(removeFriendButton);
+		
+		JButton leaveChannelButton = new JButton("Leave Channel");
+		leaveChannelButton.setBounds(10, 389, 106, 21);
+		contentPane.add(leaveChannelButton);
+		
+		JButton joinChannelButton = new JButton("Join Channel");
+		joinChannelButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		joinChannelButton.setBounds(10, 362, 106, 23);
+		contentPane.add(joinChannelButton);
+		
+		JLabel friendslistLabel = new JLabel("Friends List");
+		friendslistLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		friendslistLabel.setBounds(537, 14, 122, 14);
+		contentPane.add(friendslistLabel);
 		
 		msgToSendTxtField = new JTextField();
 		msgToSendTxtField.setBounds(136, 390, 372, 19);
@@ -190,28 +251,6 @@ public class HomeGUI extends JFrame
 		});
 		friendList.setBounds(531, 40, 145, 202);
 		contentPane.add(friendList);
-		
-		JButton addFriendButton = new JButton("Add Friend");
-		addFriendButton.setBounds(553, 252, 106, 23);
-		contentPane.add(addFriendButton);
-		
-		JButton removeFriendButton = new JButton("Remove Friend");
-		removeFriendButton.setBounds(553, 288, 106, 23);
-		contentPane.add(removeFriendButton);
-		
-		JButton leaveChannelButton = new JButton("Leave Channel");
-		leaveChannelButton.setBounds(10, 389, 106, 21);
-		contentPane.add(leaveChannelButton);
-		
-		JButton joinChannelButton = new JButton("Join Channel");
-		joinChannelButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		joinChannelButton.setBounds(10, 362, 106, 23);
-		contentPane.add(joinChannelButton);
-		
-		JLabel friendslistLabel = new JLabel("Friends List");
-		friendslistLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		friendslistLabel.setBounds(537, 14, 122, 14);
-		contentPane.add(friendslistLabel);
 	}
 	
 	//sets this client socket to the client socket from ClientGUI
@@ -222,6 +261,7 @@ public class HomeGUI extends JFrame
 		{
 			outputStream = clientSocket.getOutputStream();
 			inputStream = clientSocket.getInputStream();
+			dis = new DataInputStream(clientSocket.getInputStream());
 		} 
 		catch (IOException e) 
 		{
@@ -230,14 +270,35 @@ public class HomeGUI extends JFrame
 	}
 	public String getChannelText(String msg) throws IOException
 	{
-		outputStream.write(msg.getBytes());
-		inputStream = clientSocket.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-		String line, channelText = null;	
-		while ((line = reader.readLine()) != null)
-		{
-			channelText += line;
-		}
-		return channelText;
+//		outputStream.write(msg.getBytes());
+//		inputStream = clientSocket.getInputStream();
+//		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+//		String line, channelText = null;	
+//		while ((line = reader.readLine()) != null)
+//		{
+//			channelText += line;
+//		}
+//		return channelText;
+		//outputStream = clientSocket.getOutputStream();
+		outputStream.write((msg).getBytes());
+		//dis = new DataInputStream(clientSocket.getInputStream());
+		String k = "";
+		String fullTextFile = "";
+		while(!(k = dis.readUTF()).equals("EndOfFile\n"))
+        {          
+			if(!k.equals("EndOfFile"))
+			{
+				fullTextFile += k + "\n";
+			}						
+        }	
+		//os.close();
+		
+		return fullTextFile;
+	}
+	
+	public void SendTextToChannel(String msg) throws IOException
+	{
+		//outputStream =  clientSocket.getOutputStream();
+		outputStream.write((msg).getBytes());
 	}
 }

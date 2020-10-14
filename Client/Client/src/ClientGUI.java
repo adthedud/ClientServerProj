@@ -33,7 +33,9 @@ public class ClientGUI
 	private JPasswordField passwordField;
 	private static final String[] protocols = new String[] {"TLSv1.3"};
     private static final String[] cipher_suites = new String[] {"TLS_AES_128_GCM_SHA256"};
-	
+	private OutputStream outputStream;
+	private InputStream inputStream;
+	private BufferedReader reader;
     private SSLSocketFactory factory;
     private SSLSocket clientSocket;
 	/**
@@ -103,8 +105,10 @@ public class ClientGUI
         clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
         clientSocket.setEnabledProtocols(protocols);
         clientSocket.setEnabledCipherSuites(cipher_suites);
-
 	    clientSocket.startHandshake();
+		outputStream = clientSocket.getOutputStream();
+		inputStream = clientSocket.getInputStream();
+		reader = new BufferedReader(new InputStreamReader(inputStream));
 		
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.setMnemonic(KeyEvent.VK_ENTER);
@@ -123,6 +127,13 @@ public class ClientGUI
 
 				    clientSocket.startHandshake();
 					
+//					factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+//		            clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
+//		            clientSocket.setEnabledProtocols(protocols);
+//			        clientSocket.setEnabledCipherSuites(cipher_suites);
+//
+//				    clientSocket.startHandshake();
+//					
 					//retrieves username and password from text fields
 					String username = usernameTextField.getText();
 					String password = passwordField.getText();
@@ -198,15 +209,14 @@ public class ClientGUI
 				{
 					String user = usernameTextField.getText();
 					String pass = passwordField.getText();
-					
-					OutputStream outputStream = clientSocket.getOutputStream();
+					//OutputStream outputStream = clientSocket.getOutputStream();
 					String msg = "create " + user +" " + pass + "\n";
-					System.out.println(msg);
+					//System.out.println(msg);
 					outputStream.write(msg.getBytes());
-					InputStream inputStream = clientSocket.getInputStream();
-					BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+					//inputStream = clientSocket.getInputStream();
+					//reader = new BufferedReader(new InputStreamReader(inputStream));
 					String line = reader.readLine();
-					System.out.println("clientGUI: line=" + line);
+					//System.out.println("clientGUI: line=" + line);
 					if (line != null)
 					{
 						if (line.equals("User Created"))
@@ -234,6 +244,7 @@ public class ClientGUI
 									userCreatedFrame.setVisible(false);
 								}
 							});
+							
 						}
 						else
 						{
@@ -298,10 +309,10 @@ public class ClientGUI
 	private boolean Authenticate(String user, String pass, Socket clientSocket) throws IOException//authenticates with server and grants/denies access to HomeGUI
 	{
 		System.out.println("User is: " + user + " " + "Pass is: " + pass);
-		OutputStream outputStream = clientSocket.getOutputStream();
+		//outputStream = clientSocket.getOutputStream();
 		outputStream.write(("login " + user + " " + pass + "\n").getBytes()); //TODO: get response from server and return true or false based on msg.
-		InputStream inputStream = clientSocket.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		//inputStream = clientSocket.getInputStream();
+		//reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line = reader.readLine();
 		System.out.print(line);
 		if (line != null)
