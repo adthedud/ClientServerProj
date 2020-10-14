@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JList;
+import javax.net.ssl.SSLSocket;
 import javax.swing.AbstractListModel;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -32,7 +33,7 @@ public class HomeGUI extends JFrame
 {
 	private JPanel contentPane;
 	private JTextArea textField;
-	private Socket clientSocket;
+	private SSLSocket clientSocket;
 	OutputStream outputStream;
 	InputStream inputStream;
 	private JTextField msgToSendTxtField;
@@ -250,7 +251,7 @@ public class HomeGUI extends JFrame
 	}
 	
 	//sets this client socket to the client socket from ClientGUI
-	public void setClientSocket(Socket socket)
+	public void setClientSocket(SSLSocket socket)
 	{
 		this.clientSocket = socket;
 		try 
