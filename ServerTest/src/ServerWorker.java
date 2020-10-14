@@ -4,10 +4,12 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -34,11 +36,13 @@ public class ServerWorker extends Thread
 	private OutputStream outputStream;
 	private HashSet<String> topicSet = new HashSet<>();
 	private String authFile = "src\\authenticate.json";
+	//private DataOutputStream dos;
 
-	public ServerWorker(Server server, SSLSocket clientSocket) 
+	public ServerWorker(Server server, SSLSocket clientSocket) throws IOException 
 	{
 		this.server = server;
 		this.clientSocket = clientSocket;
+		//this.dos = new DataOutputStream(this.clientSocket.getOutputStream()); 
 	}
 
 	public void run() 
@@ -66,9 +70,11 @@ public class ServerWorker extends Thread
  		while((line = reader.readLine()) != null) 
 		{
 			String[] tokens = StringUtils.split(line);
-			if(tokens != null && tokens.length > 0) 
+			String[] tokens2 = StringUtils.split(line, "#", 3);
+			if((tokens != null && tokens.length > 0) || (tokens2 != null && tokens.length > 0) ) 
 			{
 				String cmd = tokens[0];
+				String cmd2 = tokens2[0];
 				if("quit".equalsIgnoreCase(cmd)) 
 				{
 					handleLogout();
@@ -78,9 +84,9 @@ public class ServerWorker extends Thread
 				{
 					handleLogin(tokens);
 				}
-				else if ("msg".equalsIgnoreCase(cmd))
+				else if ("msg".equalsIgnoreCase(cmd2))
 				{
-					String[] tokensMsg = StringUtils.split(line, null, 3);
+					String[] tokensMsg = StringUtils.split(line, "#", 3);
 					handleMessage(tokensMsg);
 				}
 				else if ("join".equalsIgnoreCase(cmd))
@@ -120,6 +126,8 @@ public class ServerWorker extends Thread
                 dos.writeUTF(k); 
             }       
             dos.writeUTF("EndOfFile\n");
+            dos.flush();
+            br.close();
             
             System.out.println("Transfer Complete"); 
 		} catch (FileNotFoundException e) {
@@ -156,28 +164,13 @@ public class ServerWorker extends Thread
 	// msg #topic body
 	private void handleMessage(String[] tokens) throws IOException
 	{
-		String sendTo = tokens[1];
+		String channel = tokens[1];
 		String body = tokens[2];
 		
-		boolean isTopic = sendTo.charAt(0) == '#';
-		
-		List<ServerWorker> workerList = server.getWorkerList();
-		for( ServerWorker worker : workerList)
-		{
-			if(isTopic)
-			{
-				if (worker.isMemberOfTopic(sendTo))
-				{
-					String outMsg = sendTo + " msg from "+  login + ": " + body + "\n";
-					worker.send(outMsg);
-				}
-			}
-			if (sendTo.equalsIgnoreCase(worker.getLogin()))
-			{
-				String outMsg = "msg from " + login + ": " + body + "\n";
-				worker.send(outMsg);
-			}
-		}
+		BufferedWriter bw = new BufferedWriter(new FileWriter("src\\"+channel+".txt", true));
+		PrintWriter pw = new PrintWriter(bw);
+		pw.println(body);
+		pw.close();
 	}
 	
 	private void handleLogout() throws IOException

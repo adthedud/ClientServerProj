@@ -183,7 +183,23 @@ public class HomeGUI extends JFrame
 		logoutButton.setBounds(553, 358, 89, 23);
 		contentPane.add(logoutButton);
 		
+		//Sends a message to a specific channel on the server
 		JButton sendMsgButton = new JButton("Send");
+		sendMsgButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				//selectedChannel = channelList.getSelectedValue().toString();
+				String msg = "msg#"+ selectedChannel + "#" + msgToSendTxtField.getText() + "\n";
+				try
+				{
+					SendTextToChannel(msg);
+				}
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
 		sendMsgButton.setBounds(508, 389, 85, 21);
 		contentPane.add(sendMsgButton);
 		
@@ -250,8 +266,8 @@ public class HomeGUI extends JFrame
 
 	public String getChannelText(String msg) throws IOException
 	{
-		outputStream = clientSocket.getOutputStream();
-		outputStream.write((msg).getBytes());
+		OutputStream os = clientSocket.getOutputStream();
+		os.write((msg).getBytes());
 		DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
 		String k = "";
 		String fullTextFile = "";
@@ -261,8 +277,16 @@ public class HomeGUI extends JFrame
 			{
 				fullTextFile += k + "\n";
 			}						
-        }					
+        }	
+		//os.close();
 		
 		return fullTextFile;
+	}
+	
+	public void SendTextToChannel(String msg) throws IOException
+	{
+		OutputStream os =  clientSocket.getOutputStream();
+		os.write((msg).getBytes());
+		//os.close();
 	}
 }
