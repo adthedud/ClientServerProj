@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JList;
+import javax.net.ssl.SSLSocket;
 import javax.swing.AbstractListModel;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -16,6 +17,7 @@ import java.awt.Color;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,20 +32,10 @@ public class HomeGUI extends JFrame
 {
 	private JPanel contentPane;
 	private JTextArea textField;
-<<<<<<< Updated upstream
-	private Socket clientSocket;
-	OutputStream outputStream;
-	InputStream inputStream;
 	private SSLSocket clientSocket;
 	private OutputStream outputStream;
 	private InputStream inputStream;
 	private DataInputStream dis;
-=======
-	private SSLSocket clientSocket;
-	private OutputStream outputStream;
-	private InputStream inputStream;
-	private DataInputStream dis;
->>>>>>> Stashed changes
 	private JTextField msgToSendTxtField;
 	private String selectedChannel = "World Chat";
 	private String channelText = "";
@@ -94,16 +86,16 @@ public class HomeGUI extends JFrame
 		textField.setBounds(136, 37, 372, 344);
 		contentPane.add(textField);
 		textField.setColumns(10);
-		try
-		{
-			channelText = getChannelText("select World Chat\n");
-			textField.setText(channelText);
-		} 
-		catch (IOException e2)
-		{
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+//		try
+//		{
+//			channelText = getChannelText("select World Chat\n");
+//			textField.setText(channelText);
+//		} 
+//		catch (IOException e2)
+//		{
+//			// TODO Auto-generated catch block
+//			e2.printStackTrace();
+//		}
 		
 		
 		JLabel currentChannelLabel = new JLabel("World Chat");
@@ -155,10 +147,6 @@ public class HomeGUI extends JFrame
 		});
 		channelList.setBounds(10, 36, 106, 289);
 		contentPane.add(channelList);
-<<<<<<< Updated upstream
->>>>>>> stash
-=======
->>>>>>> Stashed changes
 		
 		//This Button Joins a selected channel when clicked
 		JButton createChannelButton = new JButton("Create Channel");
@@ -260,15 +248,12 @@ public class HomeGUI extends JFrame
 			}
 		});
 		friendList.setBounds(531, 40, 145, 202);
-<<<<<<< Updated upstream
 		contentPane.add(friendList);
-=======
-		contentPane.add(friendList);
->>>>>>> Stashed changes
+		contentPane.add(friendList);  //POSSIBLE DUPLICATE
 	}
 	
 	//sets this client socket to the client socket from ClientGUI
-	public void setClientSocket(Socket socket)
+	public void setClientSocket(SSLSocket socket)
 	{
 		this.clientSocket = socket;
 		try 
@@ -283,21 +268,7 @@ public class HomeGUI extends JFrame
 		}
 	}
 	public String getChannelText(String msg) throws IOException
-<<<<<<< Updated upstream
 	{
-//		outputStream.write(msg.getBytes());
-//		inputStream = clientSocket.getInputStream();
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//		String line, channelText = null;	
-//		while ((line = reader.readLine()) != null)
-//		{
-//			channelText += line;
-//		}
-//		return channelText;
-=======
-	{
->>>>>>> Stashed changes
-		//outputStream = clientSocket.getOutputStream();
 		outputStream.write((msg).getBytes());
 		//dis = new DataInputStream(clientSocket.getInputStream());
 		String k = "";
@@ -308,19 +279,14 @@ public class HomeGUI extends JFrame
 			{
 				fullTextFile += k + "\n";
 			}						
-        }	
-		//os.close();
-		
+        }
 		return fullTextFile;
 	}
 	
 	public void SendTextToChannel(String msg) throws IOException
 	{
 		//outputStream =  clientSocket.getOutputStream();
-<<<<<<< Updated upstream
 		outputStream.write((msg).getBytes());
-=======
 		outputStream.write((msg).getBytes());
->>>>>>> Stashed changes
 	}
 }
