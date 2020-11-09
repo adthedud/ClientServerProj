@@ -80,6 +80,7 @@ public class ClientGUI
 	 */
 	public ClientGUI() throws UnknownHostException, IOException 
 	{
+	
 		initialize();
 	}
 
@@ -120,6 +121,7 @@ public class ClientGUI
 				try 
 				{
 					//Creates connection to server
+<<<<<<< Updated upstream
 					SSLSocketFactory factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
 		            SSLSocket clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
 		            clientSocket.setEnabledProtocols(protocols);
@@ -127,6 +129,8 @@ public class ClientGUI
 
 				    clientSocket.startHandshake();
 					
+=======
+>>>>>>> Stashed changes
 //					factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
 //		            clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
 //		            clientSocket.setEnabledProtocols(protocols);
@@ -209,7 +213,10 @@ public class ClientGUI
 				{
 					String user = usernameTextField.getText();
 					String pass = passwordField.getText();
+<<<<<<< Updated upstream
 					//OutputStream outputStream = clientSocket.getOutputStream();
+=======
+>>>>>>> Stashed changes
 					String msg = "create " + user +" " + pass + "\n";
 					//System.out.println(msg);
 					outputStream.write(msg.getBytes());

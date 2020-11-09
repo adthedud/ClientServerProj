@@ -30,6 +30,7 @@ public class HomeGUI extends JFrame
 {
 	private JPanel contentPane;
 	private JTextArea textField;
+<<<<<<< Updated upstream
 	private Socket clientSocket;
 	OutputStream outputStream;
 	InputStream inputStream;
@@ -37,6 +38,12 @@ public class HomeGUI extends JFrame
 	private OutputStream outputStream;
 	private InputStream inputStream;
 	private DataInputStream dis;
+=======
+	private SSLSocket clientSocket;
+	private OutputStream outputStream;
+	private InputStream inputStream;
+	private DataInputStream dis;
+>>>>>>> Stashed changes
 	private JTextField msgToSendTxtField;
 	private String selectedChannel = "World Chat";
 	private String channelText = "";
@@ -148,7 +155,10 @@ public class HomeGUI extends JFrame
 		});
 		channelList.setBounds(10, 36, 106, 289);
 		contentPane.add(channelList);
+<<<<<<< Updated upstream
 >>>>>>> stash
+=======
+>>>>>>> Stashed changes
 		
 		//This Button Joins a selected channel when clicked
 		JButton createChannelButton = new JButton("Create Channel");
@@ -250,7 +260,11 @@ public class HomeGUI extends JFrame
 			}
 		});
 		friendList.setBounds(531, 40, 145, 202);
+<<<<<<< Updated upstream
 		contentPane.add(friendList);
+=======
+		contentPane.add(friendList);
+>>>>>>> Stashed changes
 	}
 	
 	//sets this client socket to the client socket from ClientGUI
@@ -269,6 +283,7 @@ public class HomeGUI extends JFrame
 		}
 	}
 	public String getChannelText(String msg) throws IOException
+<<<<<<< Updated upstream
 	{
 //		outputStream.write(msg.getBytes());
 //		inputStream = clientSocket.getInputStream();
@@ -279,6 +294,9 @@ public class HomeGUI extends JFrame
 //			channelText += line;
 //		}
 //		return channelText;
+=======
+	{
+>>>>>>> Stashed changes
 		//outputStream = clientSocket.getOutputStream();
 		outputStream.write((msg).getBytes());
 		//dis = new DataInputStream(clientSocket.getInputStream());
@@ -299,6 +317,10 @@ public class HomeGUI extends JFrame
 	public void SendTextToChannel(String msg) throws IOException
 	{
 		//outputStream =  clientSocket.getOutputStream();
+<<<<<<< Updated upstream
 		outputStream.write((msg).getBytes());
+=======
+		outputStream.write((msg).getBytes());
+>>>>>>> Stashed changes
 	}
 }
