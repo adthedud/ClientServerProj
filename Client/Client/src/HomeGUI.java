@@ -26,6 +26,7 @@ import java.net.Socket;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Button;
 import javax.swing.JTextArea;
 
 public class HomeGUI extends JFrame
@@ -98,7 +99,7 @@ public class HomeGUI extends JFrame
 //		}
 		
 		
-		JLabel currentChannelLabel = new JLabel("World Chat");
+		JLabel currentChannelLabel = new JLabel("worldChat");
 		currentChannelLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		currentChannelLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		currentChannelLabel.setBounds(136, 13, 372, 23);
@@ -174,7 +175,6 @@ public class HomeGUI extends JFrame
 					outputStream.write(("quit\n").getBytes());
 					//clientSocket.close(); Server should do this in handleLogout
 					HomeGUI.this.setVisible(false);
-					//TODO: Need to close socket
 				} 
 				catch (IOException e1) 
 				{
@@ -185,8 +185,8 @@ public class HomeGUI extends JFrame
 		logoutButton.setBounds(553, 358, 89, 23);
 		contentPane.add(logoutButton);
 		
+		//Sends a message to a specific channel on the server
 		JButton sendMsgButton = new JButton("Send");
-
 		sendMsgButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -194,8 +194,7 @@ public class HomeGUI extends JFrame
 				String msg = "msg#"+ selectedChannel + "#" + msgToSendTxtField.getText() + "\n";
 				try
 				{
-					//SendTextToChannel(msg);
-					outputStream.write((msg).getBytes());
+					SendTextToChannel(msg);
 				}
 				catch (IOException e1)
 				{
@@ -249,7 +248,6 @@ public class HomeGUI extends JFrame
 		});
 		friendList.setBounds(531, 40, 145, 202);
 		contentPane.add(friendList);
-		contentPane.add(friendList);  //POSSIBLE DUPLICATE
 	}
 	
 	//sets this client socket to the client socket from ClientGUI
