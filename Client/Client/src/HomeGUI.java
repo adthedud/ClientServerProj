@@ -38,7 +38,7 @@ public class HomeGUI extends JFrame
 	private InputStream inputStream;
 	private DataInputStream dis;
 	private JTextField msgToSendTxtField;
-	private String selectedChannel = "World Chat";
+	private String selectedChannel = "worldChat";
 	private String channelText = "";
 	/**
 	 * Launch the application.
@@ -204,6 +204,11 @@ public class HomeGUI extends JFrame
 		});
 		sendMsgButton.setBounds(508, 389, 85, 21);
 		contentPane.add(sendMsgButton);
+		
+		msgToSendTxtField = new JTextField();
+		msgToSendTxtField.setBounds(136, 390, 372, 19);
+		contentPane.add(msgToSendTxtField);
+		msgToSendTxtField.setColumns(10);
 			
 		JButton addFriendButton = new JButton("Add Friend");
 		addFriendButton.setBounds(553, 252, 106, 23);
@@ -227,10 +232,6 @@ public class HomeGUI extends JFrame
 		friendslistLabel.setBounds(537, 14, 122, 14);
 		contentPane.add(friendslistLabel);
 		
-		msgToSendTxtField = new JTextField();
-		msgToSendTxtField.setBounds(136, 390, 372, 19);
-		contentPane.add(msgToSendTxtField);
-		msgToSendTxtField.setColumns(10);
 		
 		JList<String> friendList = new JList<String>();
 		friendList.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -285,6 +286,6 @@ public class HomeGUI extends JFrame
 	{
 		//outputStream =  clientSocket.getOutputStream();
 		outputStream.write((msg).getBytes());
-		outputStream.write((msg).getBytes());
+		//outputStream.write((msg).getBytes());
 	}
 }

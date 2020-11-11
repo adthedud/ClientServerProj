@@ -24,3 +24,5 @@ Methods for ModifyJSON.java
 	//createJSONObject(String username, String password)	//add value to field
 	addJSONArrayElement(String field, String username, String value) //adding value to field = (friendsList or channels) for username = (adam, jake, etc)
 	removeJSONString(String field, String username, String value)	//remove value from friendsList or channels
+	
+	
