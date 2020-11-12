@@ -120,21 +120,6 @@ public class ClientGUI
 			{
 				try 
 				{
-					//Creates connection to server
-					SSLSocketFactory factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
-		            SSLSocket clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
-		            clientSocket.setEnabledProtocols(protocols);
-			        clientSocket.setEnabledCipherSuites(cipher_suites);
-
-				    clientSocket.startHandshake();
-
-//					factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
-//		            clientSocket = (SSLSocket)factory.createSocket("localhost", 8817);
-//		            clientSocket.setEnabledProtocols(protocols);
-//			        clientSocket.setEnabledCipherSuites(cipher_suites);
-//
-//				    clientSocket.startHandshake();
-//					
 					//retrieves username and password from text fields
 					String username = usernameTextField.getText();
 					String password = passwordField.getText();

@@ -34,11 +34,11 @@ public class HomeGUI extends JFrame
 	private JPanel contentPane;
 	private JTextArea textField;
 	private SSLSocket clientSocket;
-	private OutputStream outputStream;
-	private InputStream inputStream;
+	 OutputStream outputStream;
+	InputStream inputStream;
 	private DataInputStream dis;
 	private JTextField msgToSendTxtField;
-	private String selectedChannel = "worldChat";
+	private String selectedChannel = "World Chat";
 	private String channelText = "";
 	/**
 	 * Launch the application.
