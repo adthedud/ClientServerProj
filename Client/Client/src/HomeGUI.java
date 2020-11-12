@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JList;
+import javax.net.ssl.SSLSocket;
 import javax.swing.AbstractListModel;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -15,23 +16,30 @@ import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Button;
+import javax.swing.JTextArea;
 
 public class HomeGUI extends JFrame
 {
 	private JPanel contentPane;
-	private JTextField textField;
-	private Socket clientSocket;
-	OutputStream outputStream;
+	private JTextArea textField;
+	private SSLSocket clientSocket;
+	 OutputStream outputStream;
 	InputStream inputStream;
+	private DataInputStream dis;
 	private JTextField msgToSendTxtField;
-	
+	private String selectedChannel = "World Chat";
+	private String channelText = "";
 	/**
 	 * Launch the application.
 	 */
@@ -60,27 +68,75 @@ public class HomeGUI extends JFrame
 	@SuppressWarnings("unchecked")  //added to suppress warning at line 70 channellist.setModel(...)
 	public HomeGUI() 
 	{
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 447);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+
+		JLabel channelLabel = new JLabel("Channels");
+		channelLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		channelLabel.setBounds(10, 11, 122, 14);
+		contentPane.add(channelLabel);
 		
+		textField = new JTextArea();
+		textField.setBackground(Color.WHITE);
+		textField.setEditable(false);
+		textField.setBounds(136, 37, 372, 344);
+		contentPane.add(textField);
+		textField.setColumns(10);
+//		try
+//		{
+//			channelText = getChannelText("select World Chat\n");
+//			textField.setText(channelText);
+//		} 
+//		catch (IOException e2)
+//		{
+//			// TODO Auto-generated catch block
+//			e2.printStackTrace();
+//		}
+		
+		
+		JLabel currentChannelLabel = new JLabel("worldChat");
+		currentChannelLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		currentChannelLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		currentChannelLabel.setBounds(136, 13, 372, 23);
+		contentPane.add(currentChannelLabel);
+		
+		//channelList is the list of channels, includes listener to change text when channel is selected
 		JList channelList = new JList();
-		ListSelectionModel listSelect = channelList.getSelectionModel();
-//		listSelect.addListSelectionListener(new ListSelectionListener ()
-//				{
-//					@Override
-//					public void valueChanged(ListSelectionEvent e)
-//					{
-//						// TODO Auto-generated method stub
-//					}
-//				});
+		ListSelectionListener listListener = new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				boolean adjusting = e.getValueIsAdjusting();
+				if (!adjusting)
+				{
+					selectedChannel = channelList.getSelectedValue().toString();
+					//System.out.println(selectedChannel);
+					currentChannelLabel.setText(selectedChannel);
+					String msg = "select " + selectedChannel + "\n";
+					try
+					{
+						channelText = getChannelText(msg);
+						textField.setText(channelText);
+					} 
+					catch (IOException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
+		};
+	
+		channelList.addListSelectionListener(listListener);
 		channelList.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		channelList.setModel(new AbstractListModel() 
 		{
-			String[] values = new String[] {"World Chat", "Channel 2"};
+			String[] values = new String[] {"worldChat", "Channel 2"};
 			public int getSize() 
 			{
 				return values.length;
@@ -93,24 +149,6 @@ public class HomeGUI extends JFrame
 		channelList.setBounds(10, 36, 106, 289);
 		contentPane.add(channelList);
 		
-		JLabel channelLabel = new JLabel("Channels");
-		channelLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		channelLabel.setBounds(10, 11, 122, 14);
-		contentPane.add(channelLabel);
-		
-		textField = new JTextField();
-		textField.setBackground(Color.WHITE);
-		textField.setEditable(false);
-		textField.setBounds(136, 37, 372, 344);
-		contentPane.add(textField);
-		textField.setColumns(10);
-		
-		JLabel currentChannelLabel = new JLabel("World Chat");
-		currentChannelLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		currentChannelLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		currentChannelLabel.setBounds(136, 13, 372, 23);
-		contentPane.add(currentChannelLabel);
-		
 		//This Button Joins a selected channel when clicked
 		JButton createChannelButton = new JButton("Create Channel");
 		createChannelButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -118,9 +156,9 @@ public class HomeGUI extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				int channelIndex;
-				channelIndex = channelList.getSelectedIndex();
-				currentChannelLabel.setText(channelList.getSelectedValue().toString());
+//				int channelIndex;
+//				channelIndex = channelList.getSelectedIndex();
+//				currentChannelLabel.setText(channelList.getSelectedValue().toString());
 			}
 		});
 		createChannelButton.setBounds(10, 335, 106, 23);
@@ -147,7 +185,23 @@ public class HomeGUI extends JFrame
 		logoutButton.setBounds(553, 358, 89, 23);
 		contentPane.add(logoutButton);
 		
+		//Sends a message to a specific channel on the server
 		JButton sendMsgButton = new JButton("Send");
+		sendMsgButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				//selectedChannel = channelList.getSelectedValue().toString();
+				String msg = "msg#"+ selectedChannel + "#" + msgToSendTxtField.getText() + "\n";
+				try
+				{
+					SendTextToChannel(msg);
+				}
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
 		sendMsgButton.setBounds(508, 389, 85, 21);
 		contentPane.add(sendMsgButton);
 		
@@ -155,24 +209,7 @@ public class HomeGUI extends JFrame
 		msgToSendTxtField.setBounds(136, 390, 372, 19);
 		contentPane.add(msgToSendTxtField);
 		msgToSendTxtField.setColumns(10);
-		
-		JList<String> friendList = new JList<String>();
-		friendList.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		friendList.setModel(new AbstractListModel() 
-		{
-			String[] values = new String[] {"Adam", "Jake"};
-			public int getSize() 
-			{
-				return values.length;
-			}
-			public Object getElementAt(int index) 
-			{
-				return values[index];
-			}
-		});
-		friendList.setBounds(531, 40, 145, 202);
-		contentPane.add(friendList);
-		
+			
 		JButton addFriendButton = new JButton("Add Friend");
 		addFriendButton.setBounds(553, 252, 106, 23);
 		contentPane.add(addFriendButton);
@@ -194,20 +231,61 @@ public class HomeGUI extends JFrame
 		friendslistLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		friendslistLabel.setBounds(537, 14, 122, 14);
 		contentPane.add(friendslistLabel);
+		
+		
+		JList<String> friendList = new JList<String>();
+		friendList.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		friendList.setModel(new AbstractListModel() 
+		{
+			String[] values = new String[] {"Adam", "Jake"};
+			public int getSize() 
+			{
+				return values.length;
+			}
+			public Object getElementAt(int index) 
+			{
+				return values[index];
+			}
+		});
+		friendList.setBounds(531, 40, 145, 202);
+		contentPane.add(friendList);
 	}
 	
 	//sets this client socket to the client socket from ClientGUI
-	public void setClientSocket(Socket socket)
+	public void setClientSocket(SSLSocket socket)
 	{
 		this.clientSocket = socket;
 		try 
 		{
 			outputStream = clientSocket.getOutputStream();
 			inputStream = clientSocket.getInputStream();
+			dis = new DataInputStream(clientSocket.getInputStream());
 		} 
 		catch (IOException e) 
 		{
 			e.printStackTrace();
 		}
+	}
+	public String getChannelText(String msg) throws IOException
+	{
+		outputStream.write((msg).getBytes());
+		//dis = new DataInputStream(clientSocket.getInputStream());
+		String k = "";
+		String fullTextFile = "";
+		while(!(k = dis.readUTF()).equals("EndOfFile\n"))
+        {          
+			if(!k.equals("EndOfFile"))
+			{
+				fullTextFile += k + "\n";
+			}						
+        }
+		return fullTextFile;
+	}
+	
+	public void SendTextToChannel(String msg) throws IOException
+	{
+		//outputStream =  clientSocket.getOutputStream();
+		outputStream.write((msg).getBytes());
+		//outputStream.write((msg).getBytes());
 	}
 }
